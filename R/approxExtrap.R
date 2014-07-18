@@ -1,5 +1,18 @@
-approxExtrap <-
-function (x, y, xout, method = "linear", n = 50, rule = 2, f = 0,ties = "ordered", na.rm = FALSE){
+##' Function approxExtrap
+##' 
+##' Function approxExtrap
+##' This function is called from find_spectrum.R, find_spectrum2.R, spec2NIST.R and spec2NIST2.R
+##' @param x
+##' @param y
+##' @param xout
+##' @param method
+##' @param n
+##' @param rule
+##' @param f
+##' @param ties
+##' @param na.rm
+##' @return list(x,y)
+approxExtrap <- function (x, y, xout, method = "linear", n = 50, rule = 2, f = 0,ties = "ordered", na.rm = FALSE){
 	
 	if(is.list(x)){
 		y <- x[[2]]

@@ -1,5 +1,15 @@
-do_AR_all <-
-function(x,projectpath,NL,RP,RT_LIMIT,SCAN_RANGE){
+##' Function do_AR_all
+##' 
+##' Function do_AR_all
+##' Funciton to do Alternate Regression
+##' @param x
+##' @param projectpath
+##' @param NL
+##' @param RP
+##' @param RT_LIMIT
+##' @param SCAN_RANGE
+##' @return C, S, INDEX, R2, noise, CP
+do_AR_all <- function(x,projectpath,NL,RP,RT_LIMIT,SCAN_RANGE){
 	
 	var <-  dim(x)[1]
 	mz  <-  dim(x)[2]

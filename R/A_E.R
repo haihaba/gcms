@@ -1,6 +1,12 @@
-A_E <-
-function(DATA,Nmin,Nmax){
-	edges	<-	c(1,length(DATA))
+##' A_E Function, Automatic Edges
+##' 
+##' Probably the funciton to set automatic edges for the processing windows
+##' @param DATA
+##' @param Nmin
+##' @param Nmax
+##' @return edges 
+A_E <- function(DATA,Nmin,Nmax){
+  edges	<-	c(1,length(DATA))
 	N		<-	0.5
 	while(max(diff(edges)) > Nmax){
 		n		<-	which.max(diff(edges)) 

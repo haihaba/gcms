@@ -1,5 +1,11 @@
-baseline <-
-function(X,projectpath,FL = 0){
+##' Function Baseline
+##' 
+##' Function Baseline
+##' @param X
+##' @param projectpath
+##' @param FL
+##' @return Xbc
+baseline <- function(X,projectpath,FL = 0){
 	#dyn.load("filterlength.so")
 	N <-  nrow(X)
 	K <-  ncol(X)

@@ -1,5 +1,13 @@
-do_AR_all_prediction <-
-function(x,S,CP,RT_LIMIT){
+##' Function do_AR_all_prediction
+##' 
+##' Function do_AR_all_prediction
+##' Funciton to do Alternate Regression on a prediction set
+##' @param x
+##' @param S
+##' @param CP
+##' @param RT_LIMIT
+##' @return Cnew
+do_AR_all_prediction <- function(x,S,CP,RT_LIMIT){
 	
 	var 		<-  nrow(x)
 	mz  		<-  ncol(x)

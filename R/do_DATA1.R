@@ -1,3 +1,15 @@
+##' Function do_DATA1
+##' 
+##' Function do_DATA1
+##' This funcition is used to arrange the initial data table after import
+##' @param INT
+##' @param MZ
+##' @param TIME
+##' @param count
+##' @param MZmin
+##' @param MZmax
+##' @param MZP
+##' @return DATA
 do_DATA1<-function(INT,MZ,TIME,count,MZmin,MZmax,MZP){
   MZ        <- round(MZ,digits = MZP)*10^MZP
   INT       <- round(INT)

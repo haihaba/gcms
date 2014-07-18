@@ -1,3 +1,14 @@
+##' Function do_Data3
+##' 
+##' Function do_Data3
+##' @param INT
+##' @param MZ
+##' @param TIME
+##' @param count
+##' @param MZmin
+##' @param MZmax
+##' @param MZP
+##' @return DATA
 do_DATA3<-function(INT,MZ,TIME,count,MZmin,MZmax,MZP){
   MZ        <- round(MZ,digits = MZP)*10^MZP
   INT       <- round(INT)

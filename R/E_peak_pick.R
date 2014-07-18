@@ -1,5 +1,11 @@
-E_peak_pick <-
-function(x,NL,min_win){
+##' Function E_peak_pick
+##' 
+##' Function E_peak_pick
+##' @param x
+##' @paran NL
+##' @param min_win
+##' @return x 
+E_peak_pick <- function(x,NL,min_win){
 	require(signal)
 	#xd1 <- -sav.gol(x,11,3,1)
 	xd1 <-  sgolayfilt(x,3,11,1)

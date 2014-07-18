@@ -1,5 +1,8 @@
-check_data <-
-function(projectpath){
+##' Function check_data
+##' 
+##' Function check_data
+##' @param projectpath
+check_data <- function(projectpath){
 
 	load(file.path(projectpath,"Aligned","files.Rdata"))
 	OBS			<-	1:length(files)

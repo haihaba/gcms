@@ -1,5 +1,15 @@
-aligndatapred <-
-function(projectpath,predpath,newsamples,target,minshift,datasource,ion){
+##' function aligndatapred
+##' 
+##' Function aligndatapred
+##' 
+##' @param projectpath
+##' @param predpath
+##' @param newsamples
+##' @param target
+##' @param minshift
+##' @param datasource
+##' @param ion
+aligndatapred <- function(projectpath,predpath,newsamples,target,minshift,datasource,ion){
 	
 	load(file.path(projectpath,"maxMZ.Rdata"))
 	alignfiles  <-  newsamples[order(newsamples)]

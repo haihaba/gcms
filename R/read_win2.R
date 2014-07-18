@@ -1,5 +1,11 @@
-read_win2 <-
-function(projectpath,type,win){
+##' Function read_win2
+##' 
+##' Function read_win2
+##' @param projectpath
+##' @param type
+##' @param win
+##' @return DATA, SPECTRUM, VARID1, OBSID1, VARID2
+read_win2<-function(projectpath,type,win){
 	
 	#require(xlsReadWrite)
 	SPECTRUM	<-	DATA	<-	VARID1	<-	VARID2	<-	numeric()

@@ -1,5 +1,10 @@
-peak_pick <-
-function(x){
+##' Function peak_pick
+##' 
+##' Function peak_pick
+##' Function to find peaks
+##' @param x
+##' @return xpeak, xout
+peak_pick<-function(x){
 	
 	xout				<-	x	<-	as.matrix(x)
 

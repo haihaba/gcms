@@ -1,5 +1,11 @@
-replot2 <-
-function(edges,DATA,zoomwidth,maintext){
+##' Function replot2
+##' 
+##' Function replot2
+##' @param edges
+##' @param DATA
+##' @param zoomwidth
+##' @param maintext
+replot2<-function(edges,DATA,zoomwidth,maintext){
 	
 	if(sum(zoomwidth) == 0){
 		zoomwidth[1]  <-  1

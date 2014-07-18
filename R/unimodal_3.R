@@ -1,5 +1,12 @@
-unimodal_3 <-
-function(C,obs,cp,RT_LIMIT){
+##' Function unimodal_3
+##' 
+##' Function unimodal_3
+##' @param C
+##' @param obs
+##' @param cp
+##' @param RT_LIMIT
+##' @return C
+unimodal_3<-function(C,obs,cp,RT_LIMIT){
 	
 	for(i in 1:obs){
 		xpeak	<-	peak_pick(t(C[,i]))$xpeak

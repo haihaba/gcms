@@ -1,5 +1,11 @@
-sfd_par <-
-function(X,num,exclude = nrow(as.matrix(X))+1){
+##' Function sfd_par
+##' 
+##' Function sfd_par
+##' @param X
+##' @param num
+##' @param exclude
+##' @return object, j, md
+sfd_par<-function(X,num,exclude = nrow(as.matrix(X))+1){
 	
 	N				<-  nrow(as.matrix(X))
 	K				<-  ncol(as.matrix(X))

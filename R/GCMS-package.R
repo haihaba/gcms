@@ -21,4 +21,4 @@
 ##' @title GC/MS Data Processing
 ##' @author Lorenz Gerber \email{lorenz.gerber@@slu.se}
 ##' @keywords package
-NA
+NULL

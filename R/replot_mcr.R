@@ -1,5 +1,18 @@
-replot_mcr <-
-function(x,y,maintext,incl,excl,numfiles,set1,set2,seltype=(!missing(set1) & !missing(set2)),plotlabels = TRUE,pred){
+##' Function replot_mcr
+##' 
+##' Function replot_mcr
+##' @param x
+##' @param y
+##' @param maintext
+##' @param incl
+##' @param excl
+##' @param numfiles
+##' @param set1
+##' @param set2
+##' @param seltype
+##' @param plotlabels
+##' @param pred 
+replot_mcr<-function(x,y,maintext,incl,excl,numfiles,set1,set2,seltype=(!missing(set1) & !missing(set2)),plotlabels = TRUE,pred){
 	
 	if(seltype == 1){
 		color <-  2*(1:numfiles %in% set1)+4*(1:numfiles %in% set2)+3*(1:numfiles %in% pred)+(1:numfiles %in% setdiff(1:numfiles,c(set1,set2,pred)))

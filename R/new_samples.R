@@ -1,5 +1,8 @@
-new_samples <-
-function(projectpath){
+##' Function new_samples
+##' 
+##' Function new_samples
+##' @param projectpath
+new_samples<-function(projectpath){
 	
 	## Skapa prediktionskatalog
 	startup <-  1

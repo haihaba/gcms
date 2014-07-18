@@ -1,5 +1,11 @@
-unimodal3 <-
-function(C,obs,RT_LIMIT){
+##' Function unimodal3
+##' 
+##' Function unimodal3
+##' @param C
+##' @param obs
+##' @param RT_LIMIT
+##' @return C, CP
+unimodal3<-function(C,obs,RT_LIMIT){
 	
 	cp	<-	excel_round(median(which.max(colMeans(t(C)))))
 	if(!length(cp)){

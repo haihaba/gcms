@@ -1,5 +1,15 @@
-replot_checkdata <-
-function(x,y,scale_text,maintext,OBS,ssX,s,coords=NULL){
+##' Function replot_checkdata
+##' 
+##' Function replot_checkdata
+##' @param x
+##' @param y
+##' @param scale_text
+##' @param maintext
+##' @param OBS
+##' @param ssX
+##' @param s
+##' @param coords
+replot_checkdata<-function(x,y,scale_text,maintext,OBS,ssX,s,coords=NULL){
 	
 	xtext <-  paste("Component 1 (",round(t(x)%*%x/ssX*100,1),"% of variation in X)",sep="")
 	ytext <-  paste("Component 2 (",round(t(y)%*%y/ssX*100,1),"% of variation in X)",sep="")

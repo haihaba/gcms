@@ -1,5 +1,10 @@
-spec2NIST2 <-
-function(projectpath,type,all=FALSE){
+##' Function spec2NIST2
+##' 
+##' Function spec2NIST2
+##' @param projectpath
+##' @param type
+##' @param all
+spec2NIST2<-function(projectpath,type,all=FALSE){
 	
 	load(file.path(projectpath,"Aligned","SCAN_RANGE.Rdata"))
 	load(file.path(projectpath,"HMCR",type,"MVA_DATA.Rdata"))

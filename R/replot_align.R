@@ -1,5 +1,15 @@
-replot_align <-
-function(DATA,ADATA,start,stop,zoomwidth = c(0,0),datasource,maintext,targetfile){
+##' Function replot_align
+##' 
+##' Function replot_align
+##' @param DATA
+##' @param ADATA
+##' @param start
+##' @param stop
+##' @param zoomwidth
+##' @param datasource
+##' @param maintext
+##' @param targetfil
+replot_align<-function(DATA,ADATA,start,stop,zoomwidth = c(0,0),datasource,maintext,targetfile){
 	
 	zoomwidth[1]	<-	max(0,zoomwidth[1])
 	zoomwidth[2]	<-	min(zoomwidth[2],ncol(DATA))

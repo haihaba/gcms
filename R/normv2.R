@@ -1,5 +1,9 @@
-normv2 <-
-function(s){
+##' Function normv2
+##' 
+##' Functino normv2
+##' @param s
+##' @return sn
+normv2 <-function(s){
 	
 	if(nrow(s) == 1){
 		sn  <-  s/sqrt(sum(s^2))

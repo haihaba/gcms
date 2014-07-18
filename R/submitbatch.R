@@ -1,5 +1,9 @@
-submitbatch <-
-function(projectpath,cores){
+##' Function submitbatch
+##' 
+##' Function submitbatch
+##' @param projectpath
+##' @param cores
+submitbatch<-function(projectpath,cores){
   if(!file.exists(file.path(projectpath,"batch.R"))){
     cat("library(batch)\n",file="batch.R")
     cat("projectpath<-getwd()\n",file="batch.R",append=T)

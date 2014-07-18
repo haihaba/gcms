@@ -1,5 +1,9 @@
-remove_outliers <-
-function(projectpath,outliers){
+##' Function remove_outliers
+##' 
+##' Function remove_outliers
+##' @param projectpath
+##' @param outliers
+remove_outliers<-function(projectpath,outliers){
 	
 	OK	<-	menu(c("Yes","No"),title="Remove outliers from further analysis?")
 	if(OK == 1 & length(outliers) & is.numeric(outliers)){

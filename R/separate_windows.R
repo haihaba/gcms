@@ -1,5 +1,13 @@
-separate_windows <-
-function(projectpath,windowlist,files,edges,model,prediction){
+##' Function separate_windows
+##' 
+##' Function separate_windows
+##' @param projectpath
+##' @param windowlist
+##' @param files
+##' @param edges
+##' @param model
+##' @param prediction
+separate_windows<-function(projectpath,windowlist,files,edges,model,prediction){
 	
 	if(length(windowlist)){
 		load(file.path(projectpath,"maxMZ.Rdata"))

@@ -1,5 +1,10 @@
-find_spectrum2 <-
-function(predpath,projectpath){
+##' Function find_spectrum2
+##' 
+##' Function find_spectrum2
+##' @param predpath
+##' @param projectpath
+##' @return type, windwolist
+find_spectrum2<-function(predpath,projectpath){
 	
 	require(MASS)
 	X11.options(type="cairo")

@@ -1,5 +1,10 @@
-pca <-
-function(X,comp){
+##' Function pca
+##' 
+##' Function pca
+##' @param X
+##' @param comp
+##' @return vec, p
+pca<-function(X,comp){
 	
 	#   Calculates Principal componets of X by calc eigvectors of X'*X or X*X'
 	#   Depending on whats easiest to calculate....

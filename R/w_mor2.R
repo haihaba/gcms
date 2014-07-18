@@ -1,5 +1,9 @@
-w_mor2 <-
-function(X){
+##' Function w_mor2
+##' 
+##' Function w_mor2
+##' @param X
+##' @return ind
+w_mor2<-function(X){
 	
 	X								<-	sweep(X,2,colMeans(X))
 	ind								<-  apply(X,2,function(X) sqrt(sum(X^2))/sqrt(sum(diff(X)^2)))

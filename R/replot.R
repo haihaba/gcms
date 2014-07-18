@@ -1,5 +1,18 @@
-replot <-
-function(plotlimits=FALSE,plotedges=FALSE,plotfigure=FALSE,ymax,edges,DATA,num,zoomwidth,maintext,min_win,max_win){
+##' Function replot
+##' 
+##' Function replot
+##' @param plotlimits
+##' @param plotedges
+##' @param plotfigure
+##' @param ymax
+##' @param edges
+##' @param DATA
+##' @param num
+##' @param zoomwidth
+##' @param maintext
+##' @param min_win
+##' @param max_win
+replot<-function(plotlimits=FALSE,plotedges=FALSE,plotfigure=FALSE,ymax,edges,DATA,num,zoomwidth,maintext,min_win,max_win){
 	
 	if(num == 0 & !missing(DATA))
 		ymax  <-	max(DATA)*1.05

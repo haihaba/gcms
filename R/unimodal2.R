@@ -1,5 +1,13 @@
-unimodal2 <-
-function(C,R,var,obs,RT_LIMIT){
+##' Function unimodal2
+##' 
+##' Function unimodal2
+##' @param C
+##' @param R
+##' @param var
+##' @param obs
+##' @param RT_LIMIT
+##' @return C, CP
+unimodal2<-function(C,R,var,obs,RT_LIMIT){
 	
 	N 	<-  nrow(C)
 	CP  <-  numeric(R)

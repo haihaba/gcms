@@ -1,5 +1,8 @@
-gui_set_edges <-
-function(projectpath){
+##' Function gui_set_edges
+##' 
+##' Function gui_set_edges
+##' @param projectpath
+gui_set_edges<-function(projectpath){
 	
 	X11.options(type="Xlib")
 	dir.create(file.path(projectpath,"Edges"),showWarnings=FALSE)

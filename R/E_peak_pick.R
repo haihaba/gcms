@@ -2,7 +2,7 @@
 ##' 
 ##' Function E_peak_pick
 ##' @param x
-##' @paran NL
+##' @param NL
 ##' @param min_win
 ##' @return x 
 E_peak_pick <- function(x,NL,min_win){

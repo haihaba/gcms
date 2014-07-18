@@ -1,3 +1,10 @@
+##' Function read_cdf
+##' 
+##' Function read_cdf
+##' @param projectpath
+##' @param filepath
+##' @param method
+##' @return Xbc, SCAN_INFO, SCAN_RANGE, file
 read_cdf <-function(projectpath,filepath, method=1){
   require(ncdf)
 

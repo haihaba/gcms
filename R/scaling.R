@@ -1,5 +1,10 @@
-scaling <-
-function(Xin,K){
+##' Function scaling
+##' 
+##' Function scaling
+##' @param Xin
+##' @param K
+##' @return Xout, scale_text
+scaling <-function(Xin,K){
 	
 	if(missing(K))
 		K	<-	menu(c("Centering","UV-Scaling","Pareto","None"),title="Select scaling function for X-matrix")

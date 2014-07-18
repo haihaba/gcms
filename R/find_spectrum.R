@@ -1,5 +1,12 @@
-find_spectrum <-
-function(projectpath,incl,extra,windowlist){
+##' Funcion find_spectrum
+##' 
+##' Function find_spectrum
+##' @param projectpath
+##' @param incl
+##' @param extra
+##' @param windowlist
+##' @return windowlist
+find_spectrum<-function(projectpath,incl,extra,windowlist){
 	
 	require(MASS)
 	X11.options(type="cairo")

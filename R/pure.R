@@ -1,13 +1,18 @@
-pure <-
-function(d,nr,f){
-	
-	# [sp,imp]=pure(d,nr,f)
-	# sp purest row/column profiles
-	# imp indexes of purest variables
-	# d data matrix; nr (rank) number of pure components to search
-	# if d(nspectra,nwave) imp gives purest nwave => sp are conc. profiles (nr,nspectra)
-	# if d(nwave,nspectra) imp gives purest nspectra => sp are spectra profiles (nr,nwave)
-	# f percent of noise allowed respect maximum of the average spectrum given in % (i.e. 1% or 0.1%))
+##' Function pure
+##' 
+##' Function pure
+##' [sp,imp]=pure(d,nr,f)
+##' sp purest row/column profiles
+##' imp indexes of purest variables
+##' d data matrix; nr (rank) number of pure components to search
+##' if d(nspectra,nwave) imp gives purest nwave => sp are conc. profiles (nr,nspectra)
+##' if d(nwave,nspectra) imp gives purest nspectra => sp are spectra profiles (nr,nwave)
+##' f percent of noise allowed respect maximum of the average spectrum given in % (i.e. 1% or 0.1%))
+##' @param d
+##' @param nr
+##' @param f
+##' @return sp, imp
+pure <-function(d,nr,f){
 
 	#[nrow,ncol]=size(d);
 	# calculation of the purity spectrum
@@ -22,8 +27,8 @@ function(d,nr,f){
 	imp 		<-  numeric()
 	mp 			<-  max(p[1,])
 	imp[1]  <-  which.max(p[1,])
-	# calculation of the correlation matrix
-
+	
+  # calculation of the correlation matrix
 	l	<-	sqrt(s[1,]^2+(m+f)^2)
 	for(i in 1:nrow(d))
 		d[i,]	<-	d[i,]/l

@@ -1,5 +1,12 @@
-sgolayfilt <-
-function(x, p = 3, n = p + 3 - p%%2, m = 0, ts = 1){
+##' Function sgolayfilt
+##' 
+##' Function sgolayfilt
+##' @param x
+##' @param p
+##' @param n
+##' @param m
+##' @param ts
+sgolayfilt<-function(x, p = 3, n = p + 3 - p%%2, m = 0, ts = 1){
 	
 	len = length(x)
 	if (class(p) == "sgolayFilter" || (!is.null(dim(p)) && dim(p) > 1)){

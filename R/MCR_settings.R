@@ -1,5 +1,9 @@
-MCR_settings <-
-function(projectpath){
+##' Function MCR_settings
+##' 
+##' Function MCR_settings
+##' @param projectpath
+##' @return MCR
+MCR_settings <-function(projectpath){
 	
 	if(file.exists(file.path(projectpath,"Edges","edges.Rdata"))){
 		load(file.path(projectpath,"Edges","edges.Rdata"))

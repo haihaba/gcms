@@ -1,5 +1,11 @@
-sgolay <-
-function(p, n, m = 0, ts = 1){ 
+##' Function sgolay
+##' 
+##' Function sgolay
+##' @param p
+##' @param n
+##' @param ts
+##' @return F 
+sgolay<-function(p, n, m = 0, ts = 1){ 
 	
 	library(MASS)
 	if (n %% 2 != 1)

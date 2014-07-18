@@ -1,5 +1,10 @@
-gui_align <-
-function(projectpath,A_DATA){
+##' Function gui_align
+##' 
+##' Function gui_align
+##' @param projectpath
+##' @param A_DATA
+##' @return A_DATA
+gui_align <- function(projectpath,A_DATA){
 
 	menuvector			<-	c(TRUE,TRUE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE)
  	p					<-	c(0,0)

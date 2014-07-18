@@ -1,5 +1,8 @@
-gui_MCR <-
-function(projectpath){
+##' Function gui_MCR
+##' 
+##' Function gui_MCR
+##' @param projectpath
+gui_MCR<-function(projectpath){
 	
 	if(file.exists(file.path(projectpath,"Aligned","files.Rdata")) | file.exists(file.path(projectpath,"Aligned","shift.Rdata"))){
 		load(file.path(projectpath,"Aligned","files.Rdata"))

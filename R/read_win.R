@@ -1,5 +1,11 @@
-read_win <-
-function(projectpath,type,win){
+##' Function read_win
+##' 
+##' Function read_win
+##' @param projectpath
+##' @param type
+##' @param win
+##' @return DATA, SPECTRUM, VARID1, OBSID1, VARID2
+read_win <- function(projectpath,type,win){
 	
 	SPECTRUM	<-	DATA	<-	VARID1	<-	VARID2	<-	numeric()
 	load(file.path(projectpath,"Edges","edges.Rdata"))

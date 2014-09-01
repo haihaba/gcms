@@ -1,12 +1,12 @@
-##' Funcion find_spectrum
+##' Function find_spectrum
 ##' 
 ##' Function find_spectrum
-##' @export
 ##' @param projectpath
 ##' @param incl
 ##' @param extra
 ##' @param windowlist
 ##' @return windowlist
+##' @export
 find_spectrum<-function(projectpath,incl,extra,windowlist){
 	
 	require(MASS)

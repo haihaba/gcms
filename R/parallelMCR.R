@@ -1,6 +1,5 @@
 ##' Parallel by mclapply
 ##' 
-##' @export
 parallelMCR<-function(projectpath){
   
   load(file.path(projectpath,"HMCR","MCR.Rdata"))

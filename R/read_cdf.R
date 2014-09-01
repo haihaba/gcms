@@ -8,6 +8,7 @@
 ##' @return Xbc, SCAN_INFO, SCAN_RANGE, file
 read_cdf <-function(projectpath,filepath, method=1){
   require(ncdf)
+  require(tcltk)
 
   if(missing(filepath))
     cdffiles <- tk_choose.files(caption="Select CDF files to import.",multi=TRUE,filters = matrix(c("CDF files (*.CDF)","*.CDF","all","*.*"),2,2,byrow=TRUE))

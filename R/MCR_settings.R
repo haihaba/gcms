@@ -1,6 +1,7 @@
 ##' Function MCR_settings
 ##' 
 ##' Function MCR_settings
+##' @export
 ##' @param projectpath
 ##' @return MCR
 MCR_settings <-function(projectpath){

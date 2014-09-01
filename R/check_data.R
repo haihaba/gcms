@@ -1,6 +1,7 @@
 ##' Function check_data
 ##' 
 ##' Function check_data
+##' @export
 ##' @param projectpath
 check_data <- function(projectpath){
 

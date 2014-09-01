@@ -1,6 +1,7 @@
 ##' Function submitbatch
 ##' 
 ##' Function submitbatch
+##' @export
 ##' @param projectpath
 ##' @param cores
 submitbatch<-function(projectpath,cores){

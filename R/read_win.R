@@ -1,6 +1,7 @@
 ##' Function read_win
 ##' 
 ##' Function read_win
+##' @export
 ##' @param projectpath
 ##' @param type
 ##' @param win

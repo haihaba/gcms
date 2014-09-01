@@ -1,6 +1,7 @@
 ##' Function gui_MCR
 ##' 
 ##' Function gui_MCR
+##' @export
 ##' @param projectpath
 gui_MCR<-function(projectpath){
 	

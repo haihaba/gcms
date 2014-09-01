@@ -1,6 +1,7 @@
 ##' Function gui_set_edges
 ##' 
 ##' Function gui_set_edges
+##' @export
 ##' @param projectpath
 gui_set_edges<-function(projectpath){
 	

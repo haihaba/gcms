@@ -1,6 +1,7 @@
 ##' Function read_cdf
 ##' 
 ##' Function read_cdf
+##' @export
 ##' @param projectpath
 ##' @param filepath
 ##' @param method

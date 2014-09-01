@@ -1,6 +1,7 @@
 ##' Funcion find_spectrum
 ##' 
 ##' Function find_spectrum
+##' @export
 ##' @param projectpath
 ##' @param incl
 ##' @param extra

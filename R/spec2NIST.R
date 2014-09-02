@@ -1,6 +1,7 @@
 ##' Function spec2NIST
 ##' 
 ##' Function spec2NIST
+##' @export
 ##' @param projectpath
 ##' @param type
 ##' @param all

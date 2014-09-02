@@ -7,7 +7,8 @@
 ##' @return C, CP
 unimodal3<-function(C,obs,RT_LIMIT){
 	
-	cp	<-	excel_round(median(which.max(colMeans(t(C)))))
+	#cp	<-	excel_round(median(which.max(colMeans(t(C)))))
+  cp  <-	round(median(which.max(colMeans(t(C)))))
 	if(!length(cp)){
 		C		<-	C*0
 		cp		<-	0

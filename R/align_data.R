@@ -14,46 +14,61 @@
 ##' @author Lorenz Gerber
 align_data <-
 function(projectpath){
-	
-	k  			<-	menu(c("Load files to align","Load previous settings","Quit"),title="\nAlign data")
+  
+  k  			<-	menu(c("Load files to align","Load previous settings","Quit"),title="\nAlign data")
 	A_DATA		<-	list()
 	A_DATA$ok	<-	0
  	if(k == 1){
- 		
- 		while(!is.numeric(mz	<-	round(as.numeric(readline("Input IC (default = 298): ")))))
-		  cat("\n Ion must be numeric!\n")
-
-		if(is.na(mz))
-			mz  <-  298
-		alignfiles 	<-  tk_choose.files(caption="Select .Rdata files to align.", multi = TRUE,filters = matrix(c("Rdata files (*.Rdata", "*.Rdata"),1,2,byrow=TRUE))
-		alignfiles  <-  alignfiles[order(alignfiles)]
-		more        <-  1
-		while(more){
-			od  <-  menu(c("Yes","No"),title="Do you want to select more files from another directory?")
-			if(od == 1)
-	  			alignfiles  <-  unique(c(alignfiles,tk_choose.files(caption="Select .Rdata file to align.", multi = TRUE,filters = matrix(c("Rdata files (*.Rdata", "*.Rdata"),1,2,byrow=TRUE))))
-	 		else
-	   			more  <-  0
-		}
+     
+     ## ask for IC, check that numeric 
+     while(!is.numeric(mz	<-	round(as.numeric(readline("Input IC (default = 298): ")))))
+       cat("\n Ion must be numeric!\n")
+     
+     ## if no value entered, use default 298
+     if(is.na(mz))
+       mz  <-  298
+     
+     ## select files to be aligned and sort, usees TclTk
+     alignfiles <- tk_choose.files(caption="Select .Rdata files to align.", multi = TRUE,filters = matrix(c("Rdata files (*.Rdata", "*.Rdata"),1,2,byrow=TRUE))
+     alignfiles <- alignfiles[order(alignfiles)]
+     
+     
+     ## select more files for processing
+     more <- 1
+     while(more){
+       od  <-  menu(c("Yes","No"),title="Do you want to select more files from another directory?")
+       
+       if(od == 1)
+         alignfiles  <-  unique(c(alignfiles,tk_choose.files(caption="Select .Rdata file to align.", multi = TRUE,filters = matrix(c("Rdata files (*.Rdata", "*.Rdata"),1,2,byrow=TRUE))))
+       else
+         more <- 0
+     }
 		
 		if(!length(alignfiles)){
 			cat("No files selected!\n")
 		
 		}else{
-			#do_log(projectpath,"Aligning data")
-			n				<-	length(alignfiles)
-			
+      
+      ## how many files
+      n				<-	length(alignfiles)
+      
+      ## create directory for aligned files
 			dir.create(file.path(projectpath,"Aligned"),showWarnings=FALSE)
  			
- 			COLUMNID1 		<-	cbind(sub("[.][^.]*$", "", basename(alignfiles)))   # Filenames without extensions
+      
+			## construct filenames without extensions fort COLUMNID1
+      COLUMNID1 		<-	cbind(sub("[.][^.]*$", "", basename(alignfiles)))
 			A_DATA$files	<-	files	<-	alignfiles
 			A_DATA$fsize	<-	matrix(0,n,2)
-   			
-   			for(i in 1:n){
-   				cat("Loading ", paste(basename(alignfiles[i])," (",i,"/",n,")\n",sep=""))
-				load(alignfiles[i])
-   				A_DATA$fsize[i,]		<-	dim(Xbc)
-   				num									<-	which(SCAN_RANGE == mz)       #Om length(num) == 0?
+      
+      ## Loop through the number of files to align
+      for(i in 1:n){
+        cat("Loading ", paste(basename(alignfiles[i])," (",i,"/",n,")\n",sep=""))
+        
+        ###load CDF imported RData files
+        load(alignfiles[i])
+        A_DATA$fsize[i,]		<-	dim(Xbc)
+        num									<-	which(SCAN_RANGE == mz)       #Om length(num) == 0?
 			
 				if(i == 1){
 					NUM_MZ			<-	ncol(Xbc)

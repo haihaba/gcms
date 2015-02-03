@@ -45,6 +45,7 @@ gui_set_edges<-function(projectpath){
 				
 				#graphics.off()
 				
+        ### Here the chromatograms are plotted
 				for(i in 1:nrow(DATA)){
 					plot(1:length(DATA[i,]),DATA[i,],type="l",col=i,xlim=c(0,ncol(DATA)),ylim=c(0,max(DATA)*1.01),main=maintext,xlab="",ylab="")
 		  			par(new=TRUE)

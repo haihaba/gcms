@@ -1,25 +1,26 @@
 ##' Function Baseline
 ##' 
 ##' Function Baseline
-##' @param X
-##' @param projectpath
-##' @param FL
-##' @return Xbc
+##' @param X              raw imported Data. Time as rows and mz as columns
+##' @param projectpath    baseproject directory
+##' @param FL             Filterlength
+##' @return Xbc           moving average filtered data table, one file
 baseline <- function(X,projectpath,FL = 0){
-	#dyn.load("filterlength.so")
-	N <-  nrow(X)
+	
+  N <-  nrow(X)
 	K <-  ncol(X)
 	#X	<-	sweep(X,2,apply(X,2,min))
-	if(FL){
+	
+  if(FL){
 		Xbc								<-	X*0
 		Xbc[1:FL,]						<-	X[1:FL,]
 		Xbc[(nrow(X)-FL+1):nrow(X),] 	<-	X[(nrow(X)-FL+1):nrow(X),]
 
-		#out	<-	.C("filterlength",as.integer(FL),as.integer(nrow(X)),as.integer(ncol(X)),as.double(X),results = as.double(Xbc))
-		#Xbc	<-  matrix(out[[5]],N,K)
 		
 		start<-FL+1
 		end<-dim(X)[1]-FL
+    
+    ## moving average filter along rows (scantimes)
 		Xbc[start:end,]<-filter(X,filter=rep(1/(FL*2+1),(FL*2+1)))[start:end,]
 		
 				

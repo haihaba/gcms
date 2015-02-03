@@ -1,6 +1,7 @@
 ##' Function new_samples
 ##' 
 ##' Function new_samples
+##' @export
 ##' @param projectpath
 new_samples<-function(projectpath){
 	

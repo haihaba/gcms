@@ -3,30 +3,41 @@
 ##' Function read_cdf
 ##' @export
 ##' @param projectpath
-##' @param filepath
-##' @param method
+##' @param filepath     can be used to import a single file and return the data to the caller
 ##' @return Xbc, SCAN_INFO, SCAN_RANGE, file
-read_cdf <-function(projectpath,filepath, method=1){
+read_cdf <-function(projectpath,filepath){
   require(ncdf)
   require(tcltk)
-
+  
+  
+  ### file selection by TclTk
   if(missing(filepath))
     cdffiles <- tk_choose.files(caption="Select CDF files to import.",multi=TRUE,filters = matrix(c("CDF files (*.CDF)","*.CDF","all","*.*"),2,2,byrow=TRUE))
-
   else if(file.exists(filepath))
     cdffiles <- filepath
-
+  
   if(length(cdffiles)){
     cat("Selected files: \n",paste(cdffiles,"\n ",collapse=""))
-    }else{
-      cat("No CDF files selected.")
-      return(NULL)
-      }
+  } else {
+    cat("No CDF files selected.")
+    return(NULL)
+  }
   
+  
+  
+  ## create directory for CDF raw data import
   dir.create(file.path(projectpath,"Filtered","CDF"),showWarnings=FALSE,recursive=TRUE)
-
+  
+  
+  
+  
+  
+  ## Settings Handling
   SETTINGS  <-  NULL
-
+  
+  
+  ## Check if a setting file exists, if yes read 
+  ## it else create by setting default values
   if(file.exists(file.path(projectpath,"SETTINGS.Rdata"))){
     load(file.path(projectpath,"SETTINGS.Rdata"))
     FL   <- SETTINGS$FL
@@ -41,18 +52,31 @@ read_cdf <-function(projectpath,filepath, method=1){
       MZR <-  c(50,800)
       }
 
+  
+  ## Check if maximum MZ Rdata file exist, then 
+  ## load, otherwise create the variable maxMZ
   if(file.exists(file.path(projectpath,"maxMZ.Rdata")))
     load(file.path(projectpath,"maxMZ.Rdata"))
   else
     maxMZ <- numeric()
-
+  
+  
+  
+  ## construct the filepaths for the files to save
   filepaths <-  file.path(projectpath,"Filtered","CDF",paste(sub("(.+)[.][^.]+$", "\\1", basename(cdffiles)),".Rdata",sep=""))
-
   cat("================================\n")
+  
+  
+  
+  
+  
+  ## looping through all the CDF files for importing
   for(i in 1:length(cdffiles)){
     errorcounter  <- 0
+    
+    
+    ## ncdf file import
     cdffile       <- open.ncdf(cdffiles[i])
-
     cat("File ",basename(cdffiles[i]), "opened. ",paste("(",i,"/",length(cdffiles),")",sep=""),"\n")
     MZ    <- get.var.ncdf(cdffile,varid=cdffile$var[["mass_values"]])
     cat("Reading variables...\n")
@@ -63,38 +87,33 @@ read_cdf <-function(projectpath,filepath, method=1){
     MZmax <- max(get.var.ncdf(cdffile,varid=cdffile$var[["mass_range_max"]]))
 
     close.ncdf(cdffile)
-
     cat("File ",basename(cdffiles[i]), "closed.\n")
-    if(method==1)
-      DATA <- do_DATA1(INT,MZ,TIME,count,MZmin,MZmax,MZP)
-    if(method==2)
-      DATA <- do_DATA2(INT,MZ,TIME,count,MZmin,MZmax,MZP)
-    if(method==3)
-      DATA <- do_DATA3(INT,MZ,TIME,count,MZmin,MZmax,MZP)
 
+    
+    
+    ## Data imoprt for Agilent Chemstation CDF files 
+    ## For ther CDF's eventually some adaptation is needed.
+    DATA <- do_DATA1(INT,MZ,TIME,count,MZmin,MZmax,MZP)
+  
+    
+    
+    
+    ## the raw CDF import variables are discarded to free memory
     rm(INT,MZ,count)
 
+    
+    
+    ## Smoothing of the data, Xbc is the smoothed (moving average) data 
+    ## matrix with rows mz and columns for data points
     cat(paste("Smoothing (FL = ",FL,")\n",sep=""))
-
-    Xbc <- try(baseline(DATA,projectpath,FL),silent=TRUE)
-
-    while(mode(Xbc) == "character"){
-      errorcounter  <-  errorcounter + 1
-      cat(Xbc[1])
-      cat("Garbage collection<U+2026> retrying..\n")
-      gc()
-      Xbc <- try(baseline(DATA,projectpath,FL),silent=TRUE)
-      if(errorcounter > 4 & mode(Xbc) == "character")
-        stop("Error!")
-      }
-
+    Xbc <- baseline(DATA,projectpath,FL)
     rm(DATA)
-
+    
+    ## prepare and save data
     mz        <- SCAN_RANGE <- seq(max(1,round(MZmin)),min(ncol(Xbc),round(MZmax),MZR[2]))
     Xbc       <- Xbc[,mz]
     SCAN_INFO <- matrix(cbind(1:length(TIME),TIME),nrow=length(TIME),ncol=2)
     maxMZ     <- max(maxMZ,ncol(Xbc))
-
     save(Xbc,SCAN_INFO,SCAN_RANGE,file = filepaths[i])
     rm(TIME)
     
@@ -109,6 +128,7 @@ read_cdf <-function(projectpath,filepath, method=1){
     }
 
   save(maxMZ,file=file.path(projectpath,"maxMZ.Rdata"))
+  
   if(missing(filepath)){
     cat("Done! \nAll files imported and stored in ",file.path(projectpath,"Filtered","CDF"),"\n\n")
     gc()           # Final garbage collection

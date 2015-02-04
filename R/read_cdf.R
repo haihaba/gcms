@@ -109,29 +109,42 @@ read_cdf <-function(projectpath,filepath){
     Xbc <- baseline(DATA,projectpath,FL)
     rm(DATA)
     
+    
+    
+    
     ## prepare and save data
+    
+    ## SCAN_RANGE is the sequence of MZ's in the current dataset
     mz        <- SCAN_RANGE <- seq(max(1,round(MZmin)),min(ncol(Xbc),round(MZmax),MZR[2]))
+    
+    ## Reduce Xbc to SCAN_RANGE
     Xbc       <- Xbc[,mz]
+    
+    ## SCAN_INFO, time values from CDF import
     SCAN_INFO <- matrix(cbind(1:length(TIME),TIME),nrow=length(TIME),ncol=2)
+    
+    ## maxMZ, number of mz values 
     maxMZ     <- max(maxMZ,ncol(Xbc))
+    
+    ## Save data
     save(Xbc,SCAN_INFO,SCAN_RANGE,file = filepaths[i])
     rm(TIME)
     
-
+    ## when funciton argument 'filepath' missing, delete the variables
+    ## otherwise they are still needed to return to the caller
     if(missing(filepath))
       rm(Xbc,SCAN_INFO,SCAN_RANGE)
 
     cat("================================\n")
 
-    gc()
-
     }
 
   save(maxMZ,file=file.path(projectpath,"maxMZ.Rdata"))
   
+  
+  ## return data in case filepath was provided as function argument
   if(missing(filepath)){
     cat("Done! \nAll files imported and stored in ",file.path(projectpath,"Filtered","CDF"),"\n\n")
-    gc()           # Final garbage collection
     }else
       import = list(Xbc=Xbc,SCAN_INFO=SCAN_INFO,SCAN_RANGE=SCAN_RANGE,file=basename(filepath))	  # Return variables Xbc, SCAN_INFO and SCAN_RANGE if a valid file path was supplied
 }

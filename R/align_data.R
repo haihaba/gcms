@@ -3,8 +3,11 @@
 ##'
 ##' creates a number of files:
 ##' \itemize{
-##' \item{A_DATA}{list with 'TIC','ic','bp'}
-##' \item{ADATA}{list with 'TIC','ic','bp'}
+##' \item{A_DATA}{list with 'TIC','ic','bp', 'ok', 'ion'}
+##' \item{SUM_MZ}{sum of ion counts per mz}
+##' \item{COLUMNID1}{filenames without extension}
+##' \item{SCAN_RANGE}{sequence of all mz values, is obtained from rawimport files}
+##' \item{NUM_scans}{nrow Xbc, how many data points}
 ##' }
 ##' @export
 ##' @title Alignment of GC/MS chromatograms in \code{GCMS} package
@@ -21,7 +24,8 @@ align_data <-function(projectpath){
   
   
   
-  ## A_DATA is a list that will contain TIC, Basepeak and IC chromatogram
+  ## A_DATA is a list to collect most of the data related to the alignment.
+  ## $ok, $files, $fsize, $tic, $bp, $ic, 
   A_DATA		<-	list()
 	A_DATA$ok	<-	0
  	
@@ -54,102 +58,149 @@ align_data <-function(projectpath){
          more <- 0
      }
 		
-		if(!length(alignfiles)){
+     
+     if(!length(alignfiles)){
 			cat("No files selected!\n")
-		
-		}else{
-      
-      ## how many files
-      n	<- length(alignfiles)
-      
-      ## create directory for aligned files
-			dir.create(file.path(projectpath,"Aligned"),showWarnings=FALSE)
- 			
-      
-			## construct filenames without extensions fort COLUMNID1
-      COLUMNID1 		<-	cbind(sub("[.][^.]*$", "", basename(alignfiles)))
-			A_DATA$files	<-	files	<-	alignfiles
-			A_DATA$fsize	<-	matrix(0,n,2)
-      
-      ## Loop through the number of files to align
-      for(i in 1:n){
-        cat("Loading ", paste(basename(alignfiles[i])," (",i,"/",n,")\n",sep=""))
-        
-        ###load CDF imported RData files
-        load(alignfiles[i])
-        A_DATA$fsize[i,]		<-	dim(Xbc)
-        num									<-	which(SCAN_RANGE == mz)       #Om length(num) == 0?
-			
-				if(i == 1){
-					NUM_MZ			<-	ncol(Xbc)
- 					NUM_scans		<-	nrow(Xbc)
- 					A_DATA$tic	<-	matrix(0,n,NUM_scans)
- 					A_DATA$bp		<-	matrix(0,n,NUM_scans)
- 					A_DATA$ic		<-	matrix(0,n,NUM_scans)
- 					SUM_MZ      <-  matrix(0,n,NUM_MZ)
- 				}
-   			
-   				if(nrow(Xbc) > NUM_scans){
-   					A_DATA$tic	<-	cbind(A_DATA$tic,matrix(0,n,nrow(Xbc)-NUM_scans))
-  					A_DATA$bp		<-	cbind(A_DATA$bp,matrix(0,n,nrow(Xbc)-NUM_scans))
-  					A_DATA$ic		<-  cbind(A_DATA$ic,matrix(0,n,nrow(Xbc)-NUM_scans))
-  					NUM_scans 	<-  nrow(Xbc)
-   				}
-   			
-   				if(ncol(Xbc) > NUM_MZ){
-   					SUM_MZ  <-  cbind(SUM_MZ,matrix(0,n,ncol(Xbc)-NUM_MZ))
-					NUM_MZ  <-  ncol(Xbc)
-				}
-   			
-        
-   				A_DATA$tic[i,1:nrow(Xbc)]		<-	rowSums(Xbc)
-   				A_DATA$bp[i,1:nrow(Xbc)]		<-	apply(Xbc,1,max)
-   				A_DATA$ic[i,1:nrow(Xbc)]		<-	t(Xbc[,num])
-   				SUM_MZ[i,1:ncol(Xbc)]				<-	colSums(Xbc)
-			}
-			
-			A_DATA$ion	<-	mz
-			A_DATA$ok		<-  1
-			save(A_DATA,SUM_MZ,COLUMNID1,SCAN_RANGE,NUM_scans,file=file.path(projectpath,"Aligned","A_DATA.Rdata"))
-		}
-	
-	}else if(k == 2){
-		
-		if(file.exists(file.path(projectpath,"Aligned","A_DATA.Rdata"))){
-			load(file.path(projectpath,"Aligned","A_DATA.Rdata"))
-			
-			if(!length(A_DATA$files) | !is.character(A_DATA$files) | !A_DATA$ok){
-				cat("Invalid data!\n")
-				
-			}else
-			files <-  A_DATA$files
-		
-		}else{
-			cat("Settings and alignment data not found in this project folder, please specify location.\n")
-			aligndata	<-	tk_choose.files(default=file.path(projectpath,"Aligned","A_DATA.Rdata"),caption="Select align data settings file (A_DATA.Rdata)",multi = FALSE)
-			
-			if(!length(grep(pattern="^.+\\.([rR][dD][aA][tT][aA])$",aligndata))){
-				cat("File is not .Rdata!\n\n")
-			
-			}else{
-				load(aligndata)
-				
-				if(!length(A_DATA$files) | !is.character(A_DATA$files) | !A_DATA$ok){
-					cat("Invalid data!\n")
-				
-				}else
-					files <-  A_DATA$files
-			}
-		}
-	}
-	
-	if(A_DATA$ok & k != 3 & k != 0){
-		##  GUI ALIGN
+     } else {
+       ## how many files
+       n <- length(alignfiles)
+       
+       ## create directory for aligned files
+       dir.create(file.path(projectpath,"Aligned"),showWarnings=FALSE)
+       
+       ## construct filenames without extensions for COLUMNID1
+       COLUMNID1    <-  cbind(sub("[.][^.]*$", "", basename(alignfiles)))
+       
+       ## write filenames into alignfiles
+       A_DATA$files <-  files <- alignfiles
+       
+       ## construct the matrix for $fsize, n rows for number of files
+       ## and two columns, fsize will hold the dimensions of Xbc
+       A_DATA$fsize <-  matrix(0,n,2)
+       
+       
+       
+       
+       
+       ## Loop through the number of files to align
+       for(i in 1:n){
+         cat("Loading ", paste(basename(alignfiles[i])," (",i,"/",n,")\n",sep=""))
+         
+         ## load CDF imported RData files
+         load(alignfiles[i])
+         
+         ## fsize is the dimension of the main data table Xbc
+         A_DATA$fsize[i,] <- dim(Xbc)
+         
+         ## num is the col id to choose the ion count channel
+         num <- which(SCAN_RANGE == mz)
+         
+         ## On the first file to align, setting up variables
+         if(i == 1){
+           NUM_MZ     <-  ncol(Xbc)
+           NUM_scans  <-  nrow(Xbc)
+           A_DATA$tic <-  matrix(0,n,NUM_scans)
+           A_DATA$bp  <-  matrix(0,n,NUM_scans)
+           A_DATA$ic  <-  matrix(0,n,NUM_scans)
+           SUM_MZ     <-  matrix(0,n,NUM_MZ)
+         }
+         
+         ## Check in the following files (i>1) whether nrow(Xbc)>NUM_scans
+         ## if so, extend the $tic, etc. matrices
+         if(nrow(Xbc) > NUM_scans){
+           A_DATA$tic <- cbind(A_DATA$tic,matrix(0,n,nrow(Xbc)-NUM_scans))
+           A_DATA$bp <- cbind(A_DATA$bp,matrix(0,n,nrow(Xbc)-NUM_scans))
+           A_DATA$ic <- cbind(A_DATA$ic,matrix(0,n,nrow(Xbc)-NUM_scans))
+           NUM_scans <- nrow(Xbc)  
+         }
+         
+         ## check in the files i>1 whether ncol(Xbc) > NUM_MZ
+         ## in this case, correct SUM_MZ and NUM_MZ
+         if(ncol(Xbc) > NUM_MZ){
+           SUM_MZ  <-  cbind(SUM_MZ,matrix(0,n,ncol(Xbc)-NUM_MZ))
+           NUM_MZ  <-  ncol(Xbc)  
+         }
+       
+         
+         ## calculate and write tic data
+         A_DATA$tic[i,1:nrow(Xbc)] <- rowSums(Xbc)
+         ## calculate and write basepeak data
+         A_DATA$bp[i,1:nrow(Xbc)] <- apply(Xbc,1,max)
+         ## calculate and write ion channel data
+         A_DATA$ic[i,1:nrow(Xbc)] <- t(Xbc[,num])
+         ## calculate and write sum per mz
+         SUM_MZ[i,1:ncol(Xbc)] <- colSums(Xbc)
+       }
+       
+       
+       
+       ## store the ion channel that has been
+       ## used into $ion 
+       A_DATA$ion <- mz
+       
+       
+       ## flag to activate the gui_align menu
+       A_DATA$ok <- 1
+       
+       
+       ## store all data used for alignment
+       save(A_DATA,SUM_MZ,COLUMNID1,SCAN_RANGE,NUM_scans,file=file.path(projectpath,"Aligned","A_DATA.Rdata"))
+     }
+     
+     ## loading old settings (tic, basepeak, ic)
+     }else if(k == 2){
+       
+       
+       
+       ## check if the file A_Data.Rdata exists, if yes, load it
+       if(file.exists(file.path(projectpath,"Aligned","A_DATA.Rdata"))){
+         
+         load(file.path(projectpath,"Aligned","A_DATA.Rdata"))
+         
+         
+         
+         ## check for $files (length, character) and $ok, if ok, load $files   
+         if(!length(A_DATA$files) | !is.character(A_DATA$files) | !A_DATA$ok){
+           cat("Invalid data!\n")
+         }else
+           files <-  A_DATA$files 
+       }else{
+         
+         
+         ## when A_Data.Rdata doesn't exist, ask for the location where to look
+         cat("Settings and alignment data not found in this project folder, please specify location.\n")
+         aligndata <- tk_choose.files(default=file.path(projectpath,"Aligned","A_DATA.Rdata"),caption="Select align data settings file (A_DATA.Rdata)",multi = FALSE)
+         
+         
+         
+         ## check the type of file chose. has to be Rdata
+         if(!length(grep(pattern="^.+\\.([rR][dD][aA][tT][aA])$",aligndata))){
+           cat("File is not .Rdata!\n\n")
+         }else{
+           ## load file chosen by the user
+           load(aligndata)
+         
+           
+           
+           ## check for $files (length, character) and $ok, if ok, load $files
+           if(!length(A_DATA$files) | !is.character(A_DATA$files) | !A_DATA$ok){
+             cat("Invalid data!\n")
+           }else
+             files <-  A_DATA$files
+         }  
+       }
+     }
+  
+  ## Check condition to load gui_align
+  if(A_DATA$ok & k != 3 & k != 0){
+    ##  call gui_alig
 		A_DATA  <-  gui_align(projectpath,A_DATA)
-		##
+    
+    ## flag for exiting on value 0
 		runagain  <-  1
 		
-		while(runagain){
+    ## loop around 
+    while(runagain){
 			
 			if(A_DATA$ok){
 				shift			<-	A_DATA$shift

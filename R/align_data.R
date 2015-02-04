@@ -12,15 +12,24 @@
 ##' @return a directory \code{alignement} is created that includes the
 ##' related to chromatogram alignment. 
 ##' @author Lorenz Gerber
-align_data <-
-function(projectpath){
+align_data <-function(projectpath){
   
-  k  			<-	menu(c("Load files to align","Load previous settings","Quit"),title="\nAlign data")
-	A_DATA		<-	list()
+  
+  
+  ## Initial Menu for Alignment
+  k <- menu(c("Load files to align","Load previous settings","Quit"),title="\nAlign data")
+  
+  
+  
+  ## A_DATA is a list that will contain TIC, Basepeak and IC chromatogram
+  A_DATA		<-	list()
 	A_DATA$ok	<-	0
- 	if(k == 1){
+ 	
+  
+  ## Load files to align, k == 1 
+  if(k == 1){
      
-     ## ask for IC, check that numeric 
+     ## ask for Ion Chromatogram to extract (IC), check for numeric 
      while(!is.numeric(mz	<-	round(as.numeric(readline("Input IC (default = 298): ")))))
        cat("\n Ion must be numeric!\n")
      
@@ -39,6 +48,7 @@ function(projectpath){
        od  <-  menu(c("Yes","No"),title="Do you want to select more files from another directory?")
        
        if(od == 1)
+         ## alignfiles contains the files with path
          alignfiles  <-  unique(c(alignfiles,tk_choose.files(caption="Select .Rdata file to align.", multi = TRUE,filters = matrix(c("Rdata files (*.Rdata", "*.Rdata"),1,2,byrow=TRUE))))
        else
          more <- 0
@@ -50,7 +60,7 @@ function(projectpath){
 		}else{
       
       ## how many files
-      n				<-	length(alignfiles)
+      n	<- length(alignfiles)
       
       ## create directory for aligned files
 			dir.create(file.path(projectpath,"Aligned"),showWarnings=FALSE)
@@ -91,6 +101,7 @@ function(projectpath){
 					NUM_MZ  <-  ncol(Xbc)
 				}
    			
+        
    				A_DATA$tic[i,1:nrow(Xbc)]		<-	rowSums(Xbc)
    				A_DATA$bp[i,1:nrow(Xbc)]		<-	apply(Xbc,1,max)
    				A_DATA$ic[i,1:nrow(Xbc)]		<-	t(Xbc[,num])

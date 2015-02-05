@@ -202,19 +202,26 @@ align_data <-function(projectpath){
     ## loop around 
     while(runagain){
 			
+      ## if the data is ready for further processing
+      ## A_DATA$ok should be set to 1 in gui_align
 			if(A_DATA$ok){
-				shift			<-	A_DATA$shift
+				
+        ## preparing for TIC and Basepeak correction
+        shift			<-	A_DATA$shift
 				start 		<-  1+shift[1:nrow(A_DATA$tic)]
 				stop			<-	ncol(A_DATA$tic)-max(shift)+shift[1:nrow(A_DATA$tic)]
 				BASEPEAK	<-	matrix(0,nrow(A_DATA$bp),ncol(A_DATA$bp))
 				TIC				<-	matrix(0,nrow(A_DATA$tic),ncol(A_DATA$tic))
-				for(i in 1:nrow(A_DATA$bp)){
+				
+        ## Correcting TIC and Basepeak for the shift
+        for(i in 1:nrow(A_DATA$bp)){
 					TIC[i,1:(stop[i]-start[i]+1)]			<-	A_DATA$tic[i,start[i]:stop[i]]
 		  			BASEPEAK[i,1:(stop[i]-start[i]+1)]	<-	A_DATA$bp[i,start[i]:stop[i]]
 				}
 				
 				TIC_RAW	<-	A_DATA$tic
-
+        
+        ## writing all the data to file
 				cat("Saving variables..\n")
 				save(TIC_RAW,file=file.path(projectpath,"Aligned","TIC_RAW.Rdata"))
 				save(shift,file=file.path(projectpath,"Aligned","shift.Rdata"))
@@ -227,8 +234,7 @@ align_data <-function(projectpath){
 				save(NUM_scans,file=file.path(projectpath,"Aligned","NUM_scans.Rdata"))
 
 				textstr <-  paste(files," Shift: ", shift," Scans: ", A_DATA$fsize[,1]," MZ: ",A_DATA$fsize[,2],sep="\n")
-				#do_log(projectpath,textstr)
-
+				
 				target 		<-	A_DATA$target
 				minshift	<-	A_DATA$minshift
 				ion			<-	A_DATA$ion
@@ -236,14 +242,13 @@ align_data <-function(projectpath){
 				targetfile	<-	A_DATA$targetfile
 
 				save(target, minshift, datasource, ion,targetfile,file=file.path(projectpath,"Aligned","target.Rdata"))
-				#do_log(projectpath,paste("Target file: ", targetfile))
-				#do_log(projectpath,switch(A_DATA$datasource, TIC = "Data used: TIC", Basepeak  = "Data used: BASEPEAK", IC  = paste("Data used: Ion Chromatogram, m/z: ", ion)))
-				#do_log(projectpath,"----------------------")
+				
+        ## runagain set to 0, processing was succesful
 				runagain  <-  0
 			
 			}else{
-				runagain  <-  menu(c("Yes","No"),title="No alignment was done! Are you sure you want to quit?")
-				
+				## No alignment done yet, should it be tried again?
+        runagain  <-  menu(c("Yes","No"),title="No alignment was done! Are you sure you want to quit?")
 				if(runagain == 1)
 					runagain  <-  0
 				else

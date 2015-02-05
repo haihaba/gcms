@@ -4,16 +4,20 @@
 ##' @export
 ##' @param projectpath
 check_data <- function(projectpath){
-
+  
+  
+  ## Loading the list of files and setting variables
 	load(file.path(projectpath,"Aligned","files.Rdata"))
-	OBS			<-	1:length(files)
+  OBS			<-	1:length(files)
 	s     		<-	character()
 	COMP  		<-	1:5
 	scalenum	<-	0
 	x       	<-  y	<-  numeric()
 
+  ## load the data
 	load(file.path(projectpath,"Aligned","TIC.Rdata"))
  	
+  ## Use TIC for PCA, scale date, calc PCA
  	Xin				<-	TIC[OBS,]
  	maintext		<-	"Total Ion Current"
   	scale 			<-	scaling(Xin,scalenum)
@@ -21,6 +25,7 @@ check_data <- function(projectpath){
  	scale_text		<-	scale$scale_text
  	vec				<-	pca(X,2)$vec
 	
+  ## Set up folder for Check Data
 	dir.create(file.path(projectpath,"Check Data"),showWarnings = FALSE)
 	
 	for(i in 1:length(files)){
@@ -97,6 +102,8 @@ check_data <- function(projectpath){
 			select.list(s,title="Outliers")
 		
 		}else if(k == "Mark outliers"){
+      
+      ## the data points in mark are excluded
 			mark  <-  select.list(s,preselect=s[1],multiple=TRUE,title="Mark outliers to remove.")
 			s[s %in% mark] <-  paste(stemp[s %in% mark]," [OUT]")
 			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),s)

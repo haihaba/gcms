@@ -16,8 +16,8 @@ gui_set_edges<-function(projectpath){
 	max_win 			<-	450
 	edges				<-	numeric()
 	deletededges		<-	numeric()
-	menuvector  		<-	c(TRUE,FALSE,FALSE,FALSE,FALSE,TRUE)
-	menulist 			<-	c("Load data","Load old edges","Auto edges","Plot controls","Save windows as .png","Quit")
+	menuvector  		<-	c(TRUE,FALSE,FALSE,FALSE,TRUE)
+	menulist 			<-	c("Load data","Load old edges","Auto edges","Plot controls","Quit")
 	k  					<-	1
 	X11()
 	
@@ -46,10 +46,12 @@ gui_set_edges<-function(projectpath){
 				#graphics.off()
 				
         ### Here the chromatograms are plotted
-				for(i in 1:nrow(DATA)){
-					plot(1:length(DATA[i,]),DATA[i,],type="l",col=i,xlim=c(0,ncol(DATA)),ylim=c(0,max(DATA)*1.01),main=maintext,xlab="",ylab="")
-		  			par(new=TRUE)
- 				}
+				#for(i in 1:nrow(DATA)){
+          averagedData<-apply(DATA,2,mean)
+          plot(averagedData,type='l', xlim=c(0,length(averagedData)),ylim=c(0,max(averagedData)*1.01),main=maintext,xlab="",ylab="")        
+					#plot(1:length(DATA[i,]),DATA[i,],type="l",col=i,xlim=c(0,ncol(DATA)),ylim=c(0,max(DATA)*1.01),main=maintext,xlab="",ylab="")
+		  		par(new=TRUE)
+ 				#}
  				
  				edges <-  c(0,ncol(DATA))
 				menuvector[c(2,3,4)]	<-	TRUE
@@ -70,7 +72,7 @@ gui_set_edges<-function(projectpath){
 				
 				}else{
 					abline(v=edges,col="red",lwd=2)
-					menuvector[5]	<-	TRUE
+				
 				}
 			}
 		
@@ -92,23 +94,10 @@ gui_set_edges<-function(projectpath){
 					abline(v=edges,col="white",lwd=2)
 				edges	<-	A_E(colSums(DATA),min_win,max_win)
 				abline(v=edges,col="red",lwd=2)
-				menuvector[5]	<-	TRUE
+				
 			}
 			
-		}else if(menulist[menuvector][k] == "Save windows as .png"){
-			cat("Storing windows as .png in ",file.path(projectpath,"Edges",maintext,"png"),"\n")
- 			dir.create(file.path(projectpath,"Edges",maintext,"png"),showWarnings = FALSE,recursive = TRUE)
-			X11.options(type="cairo")
-			x11()
-			for(i in 1:(length(edges)-1)){
-					replot(plotlimits=TRUE,plotedges=TRUE,plotfigure=TRUE,edges=edges,DATA=DATA,num=i,zoomwidth=1,maintext=maintext,min_win=min_win,max_win=max_win)
-				savePlot(file.path(projectpath,"Edges",maintext,"png",paste("win",ifelse(i<=99,ifelse(i<=9,paste("00",i,sep=""),paste("0",i,sep="")),i),sep="")),type="png")
-			}
-   			dev.off()
-   			X11.options(type="Xlib")
-   			cat("Done!\n\n")
-	 	
-	 	}else if(menulist[menuvector][k] == "Plot controls"){
+		}else if(menulist[menuvector][k] == "Plot controls"){
 	 		zoommenu  	<-  c("Zoom in","Zoom default","Zoom out","Pan left","Pan right","Move edges","Set edges","Delete edges","Back")
 			zoom 		<-	1
 			zoomwidth 	<-  c(0,0)
@@ -124,16 +113,16 @@ gui_set_edges<-function(projectpath){
 					zoom  		<-  0
 					zoomwidth <-  c(0,0)
   		  	# Zoom back to default after quit
-   					replot2(edges,DATA,zoomwidth,maintext)
+   					replot(edges,DATA,zoomwidth,maintext)
 				
 				}else if(zoom == 1){ #Zoom in
 					cat("\n\nSelect two points on the x-axis to zoom in.\n\n")
 					zoomwidth			<-	round(sort(locator(2,"p")$x))
-					replot2(edges,DATA,zoomwidth,maintext)
+					replot(edges,DATA,zoomwidth,maintext)
 				
 				}else if(zoom == 2){ #Zoom default
 					zoomwidth	<-	c(0,0)
-   					replot2(edges,DATA,zoomwidth,maintext)
+   					replot(edges,DATA,zoomwidth,maintext)
    					
 				}else if(zoom == 3){ #Zoom out
 					
@@ -147,7 +136,7 @@ gui_set_edges<-function(projectpath){
 					  	
 						if(diff(zoomwidth) > ncol(DATA))
 							zoomwidth <-  c(0,0)
-   						replot2(edges,DATA,zoomwidth,maintext)
+   						replot(edges,DATA,zoomwidth,maintext)
 					}
 				
 				}else if(zoom == 4){ #pan left
@@ -161,7 +150,7 @@ gui_set_edges<-function(projectpath){
 						tmp1  		<-  zoomwidth[1] - (zoomwidth[2]-zoomwidth[1])/3
 						tmp2  		<-  zoomwidth[2] - (zoomwidth[2]-zoomwidth[1])/3
 						zoomwidth <-  c(tmp1,tmp2)
-						replot2(edges,DATA,zoomwidth,maintext)
+						replot(edges,DATA,zoomwidth,maintext)
 					}
 				
 				}else if(zoom == 5){ #pan right
@@ -176,7 +165,7 @@ gui_set_edges<-function(projectpath){
 						tmp1  		<-  zoomwidth[1] + (zoomwidth[2]-zoomwidth[1])/3
 						tmp2  		<-  zoomwidth[2] + (zoomwidth[2]-zoomwidth[1])/3
 						zoomwidth	<-	c(tmp1,tmp2)
-						replot2(edges,DATA,zoomwidth,maintext)
+						replot(edges,DATA,zoomwidth,maintext)
 					}
 				
 				}else if(zoom == 6){
@@ -184,39 +173,47 @@ gui_set_edges<-function(projectpath){
 					more <- "yes"
 					while(more == "yes"){
 						
+            #selected_edge <- locator
 						selected_edge	<-  getGraphicsEvent(prompt = "Click near an edge to select it", onMouseDown = function(buttons,x,y) which.min(abs(edges-grconvertX(x,from="nic",to="user"))))
 						cat("Selected edge: ",selected_edge,"\n")
-						abline(v=edges[selected_edge],col="black",lwd=2)
-				 		x	<-	getGraphicsEvent(prompt = paste("Click where you want to move edge ",selected_edge,".",sep=""), onMouseDown = function(buttons,x,y) ifelse(grconvertX(x,from="nic",to="user")<0,1,ifelse(grconvertX(x,from="nic",to="user")>ncol(DATA),ncol(DATA),grconvertX(x,from="nic",to="user"))))
-						oldedge					<-	edges[selected_edge]
-            			edges[selected_edge]	<-	round(x)
-            			edges					<-	sort(edges)
-            			replot2(edges,DATA,zoomwidth,maintext)
+						
+            abline(v=edges[selected_edge],col="black",lwd=2)
+				 		
+            x	<-	getGraphicsEvent(prompt = paste("Click where you want to move edge ",selected_edge,".",sep=""), onMouseDown = function(buttons,x,y) ifelse(grconvertX(x,from="nic",to="user")<0,1,ifelse(grconvertX(x,from="nic",to="user")>ncol(DATA),ncol(DATA),grconvertX(x,from="nic",to="user"))))
+						      
+            oldedge <- edges[selected_edge]
+            edges[selected_edge] <- round(x)
+            edges <- sort(edges)
+            replot(edges,DATA,zoomwidth,maintext)
 						abline(v=oldedge,col="grey",lwd=2)
-						more  <-  tk_messageBox(type = "yesno",message = "Move more edges?")
+						more <- tk_messageBox(type = "yesno",message = "Move more edges?")
 					}
-				
+				loca
 				}else if(zoom == 7){
 					tempzoomwidth <-  zoomwidth
 					more  <-  "yes"
 					
 					while(more == "yes"){
-						x			<-	getGraphicsEvent(prompt = "Click where you want to set an edge", onMouseDown = function(buttons,x,y) ifelse(grconvertX(x,from="nic",to="user") < 1,1,ifelse(grconvertX(x,from="nic",to="user")>ncol(DATA),ncol(DATA),grconvertX(x,from="nic",to="user"))))
+            cat('Click where you want to set an edge\n')
+            x <- locator(1,'p')[[1]]
+						#x			<-	getGraphicsEvent(prompt = "Click where you want to set an edge", onMouseDown = function(buttons,x,y) ifelse(grconvertX(x,from="nic",to="user") < 1,1,ifelse(grconvertX(x,from="nic",to="user")>ncol(DATA),ncol(DATA),grconvertX(x,from="nic",to="user"))))
 						edges 		<-	sort(c(edges,round(x)))
-   						replot2(edges,DATA,zoomwidth,maintext)
+   						replot(edges,DATA,zoomwidth,maintext)
    						more	<-	tk_messageBox(type = "yesno",message = "Set more edges?")
 					}
 				}else if(zoom == 8){
 					
 					more <- "yes"
 					while(more == "yes"){
-						del_edge	<-	getGraphicsEvent(prompt = "Click near an edge to delete it", onMouseDown = function(buttons,x,y) which.min(abs(edges-grconvertX(x,from="nic",to="user"))))
+            cat("Click near an edge to delete it\n")
+            del_edge <- which.min(abs(edges-locator(1,'p')[[1]]))
+						#del_edge	<-	getGraphicsEvent(prompt = "Click near an edge to delete it", onMouseDown = function(buttons,x,y) which.min(abs(edges-grconvertX(x,from="nic",to="user"))))
 				 		cat("\nSelected edge: ",del_edge,"\n\n")
 				 		abline(v=edges[del_edge],col="black",lwd=2)
 				 		if(tk_messageBox(type="yesno",message=paste("Delete selected edge? (Edge ",del_edge,")")) == "yes"){
 							deletededges <-  c(deletededges,edges[del_edge])
 							edges 	<-  edges[-del_edge]
-       						replot2(edges,DATA,zoomwidth,maintext)
+       						replot(edges,DATA,zoomwidth,maintext)
  				 	  		abline(v=deletededges,col="grey",lwd=2)
 						
 						}else

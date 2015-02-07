@@ -1,19 +1,20 @@
 ##' Function replot_align
 ##' 
 ##' Function replot_align
-##' @param DATA
-##' @param ADATA
-##' @param start
-##' @param stop
-##' @param zoomwidth
+##' @param DATA  the target data
+##' @param ADATA the shifted data
+##' @param start start position for the chromatograms
+##' @param stop stop position for the chromatograms
+##' @param zoomwidth zoomwidth 
 ##' @param datasource
 ##' @param maintext
-##' @param targetfil
+##' @param targetfile
 replot_align<-function(DATA,ADATA,start,stop,zoomwidth = c(0,0),datasource,maintext,targetfile){
 	
 	zoomwidth[1]	<-	max(0,zoomwidth[1])
 	zoomwidth[2]	<-	min(zoomwidth[2],ncol(DATA))
 	if(sum(zoomwidth) == 0){
+    ## Plotting without zoom
 		screen(1)
 		for(i in 1:nrow(DATA)){
 	    	plot(1:length(DATA[i,]),DATA[i,],type="l",col=i,xlim=c(0,ncol(DATA)*1.01),ylim=c(0,max(DATA[,min(start):max(stop)])*1.01),main=c(maintext,paste("Target file: ", targetfile)),xlab="",ylab=datasource)
@@ -28,6 +29,8 @@ replot_align<-function(DATA,ADATA,start,stop,zoomwidth = c(0,0),datasource,maint
 				par(new=TRUE)
 			}
 		}
+    
+  ## Plot with zoom  
 	}else{
 		
 		## Plot unaligned data in upper half of graph:

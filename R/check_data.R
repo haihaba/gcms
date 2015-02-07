@@ -9,7 +9,7 @@ check_data <- function(projectpath){
   ## Loading the list of files and setting variables
 	load(file.path(projectpath,"Aligned","files.Rdata"))
   OBS			<-	1:length(files)
-	s     		<-	character()
+	select	<-	character()
 	COMP  		<-	1:5
 	scalenum	<-	0
 	x       	<-  y	<-  numeric()
@@ -31,15 +31,15 @@ check_data <- function(projectpath){
 	for(i in 1:length(files)){
 		if(i < 100){
 			if(i > 9)
-				s[i]	<-	paste("[0", i,"] ",sub("(.+)[.][^.]+$", "\\1", basename(files[i])),sep="")
+				select[i]	<-	paste("[0", i,"] ",sub("(.+)[.][^.]+$", "\\1", basename(files[i])),sep="")
       		else
-				s[i]	<-	paste("[00", i,"] ",sub("(.+)[.][^.]+$", "\\1", basename(files[i])),sep="")
+				select[i]	<-	paste("[00", i,"] ",sub("(.+)[.][^.]+$", "\\1", basename(files[i])),sep="")
 		}
 		else
-			s[i]	<-	paste("[", i,"] ",sub("(.+)[.][^.]+$", "\\1", basename(files[i])),sep="")
+			select[i]	<-	paste("[", i,"] ",sub("(.+)[.][^.]+$", "\\1", basename(files[i])),sep="")
   	}
   		
- 		stemp <-  s
+ 		selectTemp <-  select
 
 	outliers 	<-  character()
 	k			<- 1
@@ -82,7 +82,7 @@ check_data <- function(projectpath){
     			scale_text		<-	scale$scale_text
     			vec				<-	pca(X,2)$vec
 
-			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),s)
+			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),select)
                         replot<-TRUE
                                 
 		}else if(k == "Scaling"){
@@ -91,37 +91,52 @@ check_data <- function(projectpath){
 			X				<-	scale$Xout
 			scale_text		<-  scale$scale_text
 			vec				<-  pca(X,2)$vec
- 			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),s)
+ 			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),select)
                         replot<-TRUE
   	
                 }else if(k == "Export to excel"){
-                        write.table(Xin,file=file.path(projectpath,"Check Data",paste(maintext,".txt",sep="")),sep="\t",row.names = stemp)
+                        write.table(Xin,file=file.path(projectpath,"Check Data",paste(maintext,".txt",sep="")),sep="\t",row.names = selectTemp)
                         cat("Data exported to: ",file.path(projectpath,"Check Data",paste(maintext,".txt\n",sep=""),fsep="\\"))
 	
 		}else if(k == "List files"){
-			select.list(s,title="Outliers")
+			select.list(select,title="Outliers")
 		
 		}else if(k == "Mark outliers"){
       
       ## the data points in mark are excluded
-			mark  <-  select.list(s,preselect=s[1],multiple=TRUE,title="Mark outliers to remove.")
-			s[s %in% mark] <-  paste(stemp[s %in% mark]," [OUT]")
-			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),s)
+		  require(sp)
+      coordinates <- locator(type = "l")
+		  coordinates$x[length(coordinates$x + 1)] <- coordinates$x[1]
+		  coordinates$y[length(coordinates$y + 1)] <- coordinates$y[1]
+		  new.poly <- Polygon(coordinates)
+		  in.out <- as.logical(point.in.polygon(vec[,1], vec[,2], new.poly@coords[, 1], new.poly@coords[, 2]))
+		      
+			#mark  <-  select.list(select,preselect=select[1],multiple=TRUE,title="Mark outliers to remove.")
+			select[in.out] <-  paste(selectTemp[in.out]," [OUT]")
+			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),select)
                         replot<-TRUE
                         
 		}else if(k == "Unmark outliers"){
-			unmark  <-  select.list(s,preselect=s[1],multiple = TRUE,title = "Unmark outliers.")
-			s[s %in% unmark] <-  stemp[s %in% unmark]
-			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),s)
+      
+		  require(sp)
+		  coordinates <- locator(type = "l")
+		  coordinates$x[length(coordinates$x + 1)] <- coordinates$x[1]
+		  coordinates$y[length(coordinates$y + 1)] <- coordinates$y[1]
+		  new.poly <- Polygon(coordinates)
+		  in.out <- as.logical(point.in.polygon(vec[,1], vec[,2], new.poly@coords[, 1], new.poly@coords[, 2]))
+      
+			#unmark  <-  select.list(select,preselect=s[1],multiple = TRUE,title = "Unmark outliers.")
+			select[in.out] <-  selectTemp[in.out]
+			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),select)
                         replot<-TRUE
                 }else if(k == "Zoom in"){
                         coords<-locator(n=2,type="p")
-                        replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),s,coords)
+                        replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),select,coords)
 		}else if(k == "Standard zoom"){
-                        replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),s)
+                        replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),select)
                 }
 	}
 	graphics.off()
-	remove_outliers(projectpath, grep("[OUT]",s,fixed=TRUE))
+	remove_outliers(projectpath, grep("[OUT]",select,fixed=TRUE))
 }
 

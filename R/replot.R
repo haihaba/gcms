@@ -1,45 +1,33 @@
 ##' Function replot
 ##' 
 ##' Function replot
-##' @param plotlimits
-##' @param plotedges
-##' @param plotfigure
-##' @param ymax
 ##' @param edges
 ##' @param DATA
-##' @param num
 ##' @param zoomwidth
 ##' @param maintext
-##' @param min_win
-##' @param max_win
-replot<-function(plotlimits=FALSE,plotedges=FALSE,plotfigure=FALSE,ymax,edges,DATA,num,zoomwidth,maintext,min_win,max_win){
+replot<-function(edges,DATA,zoomwidth,maintext){
 	
-	if(num == 0 & !missing(DATA))
-		ymax  <-	max(DATA)*1.05
-		
-	if(plotfigure){
-		zoomwidth	<-	ifelse(num == 0,length(edges)-1,zoomwidth)
-		num			<-	max(num,1)
-		L			<-	edges[num+zoomwidth]-edges[num]
-		xmin		<-	edges[num]-L/100
-		xmax		<-	edges[num+zoomwidth]+L/100
-		ymax		<-	max(DATA[,edges[num]:edges[num+zoomwidth]])*1.05
-		par(new=FALSE)
-		
-		for(i in 1:nrow(DATA)){
-			
-			plot(edges[num]:edges[num+zoomwidth],DATA[i,edges[num]:edges[num+zoomwidth]],xlim=c(xmin,xmax),ylim=c(0,ymax),type="l",col=i,main=c(maintext,paste("Window: ",paste("[",num,"-",num+zoomwidth-1,"] (",length(edges)-1,")",sep=""))),xlab="",ylab="")
-			par(new=TRUE)
-		}
+  ## setting zoomwidth borders for no zoom
+	if(sum(zoomwidth) == 0){
+		zoomwidth[1]  <-  1
+		zoomwidth[2]  <-  ncol(DATA)
+	
+  ## setting zoomwidth borders for zoom
+	}else{
+		zoomwidth[1]	<-	max(1,zoomwidth[1])
+		zoomwidth[2]  <-  min(zoomwidth[2],ncol(DATA))
 	}
-
-	if(plotlimits){
-		m	<-	edges_move_limit(edges,min_win,max_win)
-		segments(x0=edges,y0=rep(ymax,length(edges)),x1 = m$right, y1=rep(ymax,length(edges)),lwd=2.5,col="blue")
-		segments(x1=m$left,y1=rep(0,length(edges)),x0=edges, y0=0,lwd=2.5,col="green")
-	}
-
-	if(plotedges)
-		abline(v=edges,col="red",lwd=2)
+  
+   	
+ 	ymax	<-	max(DATA[,zoomwidth[1]:zoomwidth[2]])*1.05
+ 	#par(new=FALSE)
+  
+ 	#for(i in 1:nrow(DATA)){
+  averagedData<-apply(DATA,2,mean)
+  plot(zoomwidth[1]:zoomwidth[2],averagedData[zoomwidth[1]:zoomwidth[2]], xlim=c(zoomwidth[1],zoomwidth[2]),ylim=c(0,ymax), type="l", main=maintext,xlab="",ylab="")
+ 	#	plot(zoomwidth[1]:zoomwidth[2],DATA[i,zoomwidth[1]:zoomwidth[2]],xlim=c(zoomwidth[1],zoomwidth[2]),ylim=c(0,ymax),type="l",col=i,main=maintext,xlab="",ylab="")
+  #par(new=TRUE)
+	#}
+ 	abline(v=edges,col="red",lwd=2)
 }
 

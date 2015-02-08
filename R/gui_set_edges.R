@@ -5,7 +5,7 @@
 ##' @param projectpath
 gui_set_edges<-function(projectpath){
 	
-	X11.options(type="Xlib")
+	#X11.options(type="Xlib")
 	dir.create(file.path(projectpath,"Edges"),showWarnings=FALSE)
 	#do_log(projectpath,"Setting edges...")
 		
@@ -19,7 +19,7 @@ gui_set_edges<-function(projectpath){
 	menuvector  		<-	c(TRUE,FALSE,FALSE,FALSE,TRUE)
 	menulist 			<-	c("Load data","Load old edges","Auto edges","Plot controls","Quit")
 	k  					<-	1
-	X11()
+	#X11()
 	
 	while(k){
 		cat("Number of edges:\t",length(edges),"\n============================\n")
@@ -170,56 +170,64 @@ gui_set_edges<-function(projectpath){
 				
 				}else if(zoom == 6){
 					
-					more <- "yes"
-					while(more == "yes"){
-						
-            #selected_edge <- locator
-						selected_edge	<-  getGraphicsEvent(prompt = "Click near an edge to select it", onMouseDown = function(buttons,x,y) which.min(abs(edges-grconvertX(x,from="nic",to="user"))))
+					#more <- "yes"
+					#while(more == "yes"){
+						cat('Click near an edge to select it\n')
+            selected_edge <- which.min(abs(edges-locator(1,type='p')[[1]]))
+						#selected_edge	<-  getGraphicsEvent(prompt = "Click near an edge to select it", onMouseDown = function(buttons,x,y) which.min(abs(edges-grconvertX(x,from="nic",to="user"))))
 						cat("Selected edge: ",selected_edge,"\n")
 						
             abline(v=edges[selected_edge],col="black",lwd=2)
-				 		
-            x	<-	getGraphicsEvent(prompt = paste("Click where you want to move edge ",selected_edge,".",sep=""), onMouseDown = function(buttons,x,y) ifelse(grconvertX(x,from="nic",to="user")<0,1,ifelse(grconvertX(x,from="nic",to="user")>ncol(DATA),ncol(DATA),grconvertX(x,from="nic",to="user"))))
+				 		cat('click where you want to move the edge')
+            x <- locator(1,type='p')[[1]]
+						x <- ifelse(x < 0, 1, ifelse(x > ncol(DATA), ncol(DATA), x))
+            #x	<-	getGraphicsEvent(prompt = paste("Click where you want to move edge ",selected_edge,".",sep=""), onMouseDown = function(buttons,x,y) ifelse(grconvertX(x,from="nic",to="user")<0,1,ifelse(grconvertX(x,from="nic",to="user")>ncol(DATA),ncol(DATA),grconvertX(x,from="nic",to="user"))))
 						      
             oldedge <- edges[selected_edge]
             edges[selected_edge] <- round(x)
             edges <- sort(edges)
             replot(edges,DATA,zoomwidth,maintext)
 						abline(v=oldedge,col="grey",lwd=2)
-						more <- tk_messageBox(type = "yesno",message = "Move more edges?")
-					}
-				loca
+						#more <- tk_messageBox(type = "yesno",message = "Move more edges?")
+					#}
+				
 				}else if(zoom == 7){
 					tempzoomwidth <-  zoomwidth
-					more  <-  "yes"
+					#more  <-  "yes"
 					
-					while(more == "yes"){
+					#while(more == "yes"){
             cat('Click where you want to set an edge\n')
-            x <- locator(1,'p')[[1]]
-						#x			<-	getGraphicsEvent(prompt = "Click where you want to set an edge", onMouseDown = function(buttons,x,y) ifelse(grconvertX(x,from="nic",to="user") < 1,1,ifelse(grconvertX(x,from="nic",to="user")>ncol(DATA),ncol(DATA),grconvertX(x,from="nic",to="user"))))
+            x <- locator(n=1,type='p')[[1]]
+            
+            ## check if chosen value is in
+            ## the range of the chromatorgram
+            x<-ifelse(x<0,1,ifelse(x>ncol(DATA),ncol(DATA),x))
+            #x			<-	getGraphicsEvent(prompt = "Click where you want to set an edge", onMouseDown = function(buttons,x,y) ifelse(grconvertX(x,from="nic",to="user") < 1,1,ifelse(grconvertX(x,from="nic",to="user")>ncol(DATA),ncol(DATA),grconvertX(x,from="nic",to="user"))))
 						edges 		<-	sort(c(edges,round(x)))
-   						replot(edges,DATA,zoomwidth,maintext)
-   						more	<-	tk_messageBox(type = "yesno",message = "Set more edges?")
-					}
+   					replot(edges,DATA,zoomwidth,maintext)
+   					#more	<-	tk_messageBox(type = "yesno",message = "Set more edges?")
+					#}
+          
 				}else if(zoom == 8){
 					
-					more <- "yes"
-					while(more == "yes"){
+          
+					#more <- "yes"
+					#while(more == "yes"){
             cat("Click near an edge to delete it\n")
             del_edge <- which.min(abs(edges-locator(1,'p')[[1]]))
 						#del_edge	<-	getGraphicsEvent(prompt = "Click near an edge to delete it", onMouseDown = function(buttons,x,y) which.min(abs(edges-grconvertX(x,from="nic",to="user"))))
 				 		cat("\nSelected edge: ",del_edge,"\n\n")
 				 		abline(v=edges[del_edge],col="black",lwd=2)
-				 		if(tk_messageBox(type="yesno",message=paste("Delete selected edge? (Edge ",del_edge,")")) == "yes"){
+				 		#if(tk_messageBox(type="yesno",message=paste("Delete selected edge? (Edge ",del_edge,")")) == "yes"){
 							deletededges <-  c(deletededges,edges[del_edge])
 							edges 	<-  edges[-del_edge]
        						replot(edges,DATA,zoomwidth,maintext)
  				 	  		abline(v=deletededges,col="grey",lwd=2)
 						
-						}else
-							abline(v=edges[del_edge],col="red",lwd=2)
-							more  <-  tk_messageBox(type = "yesno",message = "Delete more edges?")
-					}
+						#}else
+						#	abline(v=edges[del_edge],col="red",lwd=2)
+							#more  <-  tk_messageBox(type = "yesno",message = "Delete more edges?")
+					#}
 						
 					deletededges	<-numeric()
 				}
@@ -241,7 +249,7 @@ gui_set_edges<-function(projectpath){
 	
 	}else
 		cat("No edges set!\n")
-	graphics.off()
+	#graphics.off()
 	
 }
 

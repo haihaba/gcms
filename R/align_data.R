@@ -256,6 +256,6 @@ align_data <-function(projectpath){
 		 	}
 		}
 	}
-graphics.off()
+#graphics.off()
 }
 

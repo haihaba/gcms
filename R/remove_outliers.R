@@ -10,7 +10,7 @@ remove_outliers<-function(projectpath,outliers){
 
 		cat("Removing outliers...\n\n")
     	
-    	load(file.path(projectpath,"Aligned","TIC.Rdata"))
+    load(file.path(projectpath,"Aligned","TIC.Rdata"))
 		load(file.path(projectpath,"Aligned","BASEPEAK.Rdata"))
 		load(file.path(projectpath,"Aligned","SUM_MZ.Rdata"))
 		load(file.path(projectpath,"Aligned","shift.Rdata"))

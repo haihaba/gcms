@@ -22,8 +22,9 @@ gui_align <- function(projectpath,A_DATA){
 	k <- 1
   
   ## open a new plot
-  dev.new()
-  par(bg = "white")
+  #dev.new()
+  plot.new()
+  #par(bg = "white")
 	split.screen(c(2,1))
 	
   ## main loop for 

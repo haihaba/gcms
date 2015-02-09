@@ -43,8 +43,8 @@ check_data <- function(projectpath){
 
 	outliers 	<-  character()
 	k			<- 1
-        X11.options(type="cairo")
-        X11()
+        #X11.options(type="cairo")
+        #X11()
 
         replot=FALSE
 
@@ -136,7 +136,7 @@ check_data <- function(projectpath){
                         replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),select)
                 }
 	}
-	graphics.off()
+	#graphics.off()
 	remove_outliers(projectpath, grep("[OUT]",select,fixed=TRUE))
 }
 

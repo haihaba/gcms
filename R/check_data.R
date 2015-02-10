@@ -11,7 +11,8 @@ check_data <- function(projectpath){
   OBS			<-	1:length(files)
 	select	<-	character()
 	COMP  		<-	1:5
-	scalenum	<-	0
+	# default setting, no scaling
+  scalenum	<-	0
 	x       	<-  y	<-  numeric()
 
   ## load the data
@@ -86,17 +87,17 @@ check_data <- function(projectpath){
                         replot<-TRUE
                                 
 		}else if(k == "Scaling"){
-			scalenum 		<-  menu(c("Center","UV-scaled","Pareto-scaled","None"),title="Choose scaling method")
-			scale 			<-  scaling(Xin,scalenum)
-			X				<-	scale$Xout
-			scale_text		<-  scale$scale_text
-			vec				<-  pca(X,2)$vec
+			scalenum   <- menu(c("Center","UV-scaled","Pareto-scaled","None"),title="Choose scaling method")
+			scale      <- scaling(Xin,scalenum)
+			X          <- scale$Xout
+			scale_text <- scale$scale_text
+			vec        <- pca(X,2)$vec
  			replot_checkdata(vec[,1],vec[,2],scale_text,maintext,OBS,ss(X),select)
                         replot<-TRUE
   	
                 }else if(k == "Export to excel"){
-                        write.table(Xin,file=file.path(projectpath,"Check Data",paste(maintext,".txt",sep="")),sep="\t",row.names = selectTemp)
-                        cat("Data exported to: ",file.path(projectpath,"Check Data",paste(maintext,".txt\n",sep=""),fsep="\\"))
+                  write.table(Xin,file=file.path(projectpath,"Check Data",paste(maintext,".txt",sep="")),sep="\t",row.names = selectTemp)
+                  cat("Data exported to: ",file.path(projectpath,"Check Data",paste(maintext,".txt\n",sep=""),fsep="\\"))
 	
 		}else if(k == "List files"){
 			select.list(select,title="Outliers")

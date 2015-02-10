@@ -38,7 +38,7 @@ read_win <- function(projectpath,type,win){
 					load(file.path(projectpath,"HMCR",type,"win",paste("win",ifelse(i<=99,ifelse(i<=9,paste("00",i,sep=""),paste("0",i,sep="")),i),".Rdata",sep="")))
    			if(length(S)){
    				cat("Number of processed files: ",nrow(as.matrix(C)),"\n")
-   				excludedfiles <-  eval(parse(text=paste("MCR$",tolower(type),"$excluded",sep="")))
+   				excludedfiles <-  eval(parse(text=paste("MCR$",tolower(type),"$excl",sep="")))
       				
    				if(nrow(as.matrix(C)) == (length(files) - length(excludedfiles))){
       				cat("--------------------------------------------------------\n")

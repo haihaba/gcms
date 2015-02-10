@@ -1,6 +1,7 @@
 ##' Function pca
 ##' 
 ##' Function pca
+##' @export
 ##' @param X
 ##' @param comp
 ##' @return vec, p

@@ -17,7 +17,7 @@
 ##' @author Lorenz Gerber
 align_data <-function(projectpath){
   
-  
+  require(tcltk)
   
   ## Initial Menu for Alignment
   k <- menu(c("Load files to align","Load previous settings","Quit"),title="\nAlign data")

@@ -13,8 +13,6 @@ find_spectrum2<-function(predpath,projectpath){
 	if(file.exists(file.path(projectpath,"HMCR","REG","MVA_DATA.Rdata")))
 		datamenu  <-  "REG H-MCR DATA"
 	
-	if(file.exists(file.path(projectpath,"HMCR","CV","MVA_DATA.Rdata")))
-		datamenu  <-  c(datamenu,"CV H-MCR DATA")
 	
 	if(length(datamenu)){
 		dataexport  <-  menu(c(datamenu,"Cancel"),title="Select data")
@@ -44,7 +42,7 @@ find_spectrum2<-function(predpath,projectpath){
 		NL        <- SETTINGS$NL
 		RT_LIMIT  <- SETTINGS$MPS
 		DO_BL     <- SETTINGS$BC2
-	 	color     <- cbind("red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4")
+	 	#color     <- cbind("red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4")
     
     rm(Xbc,SETTINGS)
     

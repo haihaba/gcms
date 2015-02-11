@@ -1,10 +1,10 @@
-scoresAR	<-	function(projectpath,DATA)
-{
+scoresAR	<-	function(predpath,DATA){
+  
 	if(missing(DATA))
- 	  load(file.path(projectpath,"H_Dcomp","TOT_FILE.Rdata"))
+ 	  load(file.path(predpath,"HMCR","REG","MVA_DATA.Rdata"))
 
- 	load(file.path(projectpath,"info.Rdata"))
-	load(file.path(projectpath,"Aligned","SCAN_RANGE.Rdata"))
+ 	load(file.path(predpath,"info.Rdata"))
+	load(file.path(predpath,"Aligned","SCAN_RANGE.Rdata"))
 	D					<-	numeric()
 	VARID1		<-	character()
  	spectrum	<- numeric()
@@ -12,14 +12,14 @@ scoresAR	<-	function(projectpath,DATA)
 	{
     textstr	<-	paste("Checking window number:", i)
 		cat(textstr,"\n")
-    #do_log(projectpath,textstr)
+    #do_log(predpath,textstr)
     int   <-   which(ROWID1[,1]==i)
     XX		<-	DATA[,int]    # DATA = X
     SSX		<-	sum(XX^2)
 
     if(min(dim(XX))>2)
     {
-    	CS					<-	ARmethod1(XX,projectpath)
+    	CS					<-	ARmethod1(XX,predpath)
     	comp				<-	ncol(CS$C)
     	D						<-	cbind(D,CS$C)
     	S_temp			<-	matrix(0,nrow=comp,ncol=max(SCAN_RANGE))
@@ -55,25 +55,25 @@ scoresAR	<-	function(projectpath,DATA)
 		}
 	}
   #output	<-	list(D=D,VARID1=VARID1,spectrum=spectrum)
-  H_DcompDATA  <-  D
-  load(file.path(projectpath,"Aligned","COLUMNID1.Rdata"))
+  DATA  <-  D
+  load(file.path(predpath,"Aligned","COLUMNID1.Rdata"))
   OBSID1	<-	COLUMNID1
-  save(H_DcompDATA,OBSID1,VARID1,file=file.path(projectpath,"H_Dcomp","AR_DATA.Rdata"))
-  write.table(data.frame(ID=OBSID1,H_DcompDATA),file=file.path(projectpath,"H_Dcomp","AR_DATA.txt"),row.names=FALSE,col.names=c("PrimaryID",VARID1),sep="\t",quote=FALSE)
-	save(spectrum,VARID1,file=file.path(projectpath,"H_Dcomp","AR_SPECTRUM.Rdata"))
+  save(DATA,OBSID1,VARID1,file=file.path(predpath,"HMCR","REG","MVA_DATA.Rdata"))
+  write.table(data.frame(ID=OBSID1,DATA),file=file.path(predpath,"HMCR","REG","MVA_DATA.txt"),row.names=FALSE,col.names=c("PrimaryID",VARID1),sep="\t",quote=FALSE)
+	save(spectrum,VARID1,file=file.path(predpath,"HMCR","REG","SPECTRUM.Rdata"))
 
 
   load(files[which.min(shift)])
 	EDGES_TIME	<-	SCAN_INFO[,2]
-  save(EDGES_TIME,file=file.path(projectpath,"EDGES_TIME.Rdata"))
+  save(EDGES_TIME,file=file.path(predpath,"EDGES_TIME.Rdata"))
 
-  #do_log(projectpath,"Ending method 1")
-  #do_log(projectpath,"=================")
+  #do_log(predpath,"Ending method 1")
+  #do_log(predpath,"=================")
   
   # Not done
-  #if(file.exists.file.path(projectpath,"Alkane serie","RT_INFO.Rdata"))
+  #if(file.exists.file.path(predpath,"Alkane serie","RT_INFO.Rdata"))
   #{
-	#	load(file.path(projectpath,"Alkane_serie","RT_INFO.Rdata"))
-	#	show_spec2(projectpath)
+	#	load(file.path(predpath,"Alkane_serie","RT_INFO.Rdata"))
+	#	show_spec2(predpath)
 	#}
 }

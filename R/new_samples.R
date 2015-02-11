@@ -4,6 +4,7 @@
 ##' @export
 ##' @param projectpath
 new_samples<-function(projectpath){
+  require(tcltk)
 	
 	## Skapa prediktionskatalog
 	startup <-  1
@@ -19,6 +20,7 @@ new_samples<-function(projectpath){
 			
 			if(!is.na(temp)){
 				predpath <-  temp
+        
 				if(length(list.files(projectpath))){
 					cat("¤¤¤¤\n¤¤¤¤\n")
 					cat("Warning! ",predpath," is not empty! Some files might be overwritten!\n")
@@ -32,14 +34,14 @@ new_samples<-function(projectpath){
 				#file.copy(file.path(projectpath,"sampleinfo.Rdata"),file.path(predpath))
 				file.copy(file.path(projectpath,"maxMZ.Rdata"),file.path(predpath))
 				dir.create(file.path(predpath,"Edges"),showWarnings=FALSE)
-				dir.create(file.path(predpath,"ALKANE_SERIE"),showWarnings=FALSE)
+				#dir.create(file.path(predpath,"ALKANE_SERIE"),showWarnings=FALSE)
 				dir.create(file.path(predpath,"HMCR"),showWarnings=FALSE)
 				
 				if(file.exists(file.path(projectpath,"HMCR","MCR.Rdata")))
 					file.copy(file.path(projectpath,"HMCR","MCR.Rdata"),file.path(predpath,"HMCR"))
 				
-				if(file.exists(file.path(projectpath,"ALKANE_SERIE","RT_INFO.Rdata")))
-			  		file.copy(file.path(projectpath,"ALKANE_SERIE","RT_INFO.Rdata"),file.path(predpath,"ALKANE_SERIE"))
+				#if(file.exists(file.path(projectpath,"ALKANE_SERIE","RT_INFO.Rdata")))
+			  #		file.copy(file.path(projectpath,"ALKANE_SERIE","RT_INFO.Rdata"),file.path(predpath,"ALKANE_SERIE"))
 				
 				file.copy(file.path(projectpath,"Edges","edges.Rdata"),file.path(predpath,"Edges"))
 			
@@ -57,8 +59,10 @@ new_samples<-function(projectpath){
 		}
 	}
 		
-		
-	### MENY
+	
+  
+  
+	### Menu
 	while(a){
 		cat("\n\n===============================\n")
 		cat("===== Process new samples =====\n")
@@ -82,6 +86,7 @@ new_samples<-function(projectpath){
 			a <-  0
 			
 		}else if(a == 1){
+      
 			#Import data
 			importmenu  <-  1
 		
@@ -157,8 +162,8 @@ new_samples<-function(projectpath){
 			check_data(predpath)
 							
 		}else if(a == 5){
-			HDcompdata	<-	sigma_unfold(predpath)
-			scoresAR(predpath,HDcompdata)
+			DATA	<-	sigma_unfold(predpath)
+			scoresAR(predpath,DATA)
 				
 		}else if(a == 6){
 			cat("Resolving data.. \n")
@@ -166,7 +171,8 @@ new_samples<-function(projectpath){
 					
 			if(length(results)){
 				read_win2(predpath,results$type,results$windowlist)
-				cat("Exporting spectrum to NIST...\n")
+				
+        cat("Exporting spectrum to NIST...\n")
 				spec2NIST2(predpath,results$type,all=TRUE)
 			}
 				

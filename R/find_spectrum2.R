@@ -7,7 +7,7 @@
 find_spectrum2<-function(predpath,projectpath){
 	
 	require(MASS)
-	X11.options(type="cairo")
+	#X11.options(type="cairo")
 	datamenu  <-  character()
 	
 	if(file.exists(file.path(projectpath,"HMCR","REG","MVA_DATA.Rdata")))
@@ -41,18 +41,22 @@ find_spectrum2<-function(predpath,projectpath){
 		
 		load(file.path(projectpath,"SETTINGS.Rdata"))
 		
-		NL			<-	SETTINGS$NL
-		RT_LIMIT		<-	SETTINGS$MPS
-		DO_BL			<-	SETTINGS$BC2
-	 	color			<-		cbind("red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4")
-	  	rm(Xbc,SETTINGS)
-	  	dir.create(file.path(predpath,"Edges","dat"),recursive = TRUE,showWarnings = FALSE)
-	 	temp<-list.files(file.path(projectpath,"Edges","dat"),full.names=TRUE)
-	 	dir.create(file.path(predpath,"Edges","dat","Model samples_bg_corr"),showWarnings = FALSE,recursive=TRUE)
-	  	dir.create(file.path(predpath,"HMCR",type,"win_png"),showWarnings = FALSE,recursive = TRUE)
+		NL        <- SETTINGS$NL
+		RT_LIMIT  <- SETTINGS$MPS
+		DO_BL     <- SETTINGS$BC2
+	 	color     <- cbind("red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4","red","green","blue","black","purple","grey","yellow4")
+    
+    rm(Xbc,SETTINGS)
+    
+    dir.create(file.path(predpath,"Edges","dat"),recursive = TRUE,showWarnings = FALSE)
+    temp <- list.files(file.path(projectpath,"Edges","dat"),full.names=TRUE)
+    dir.create(file.path(predpath,"Edges","dat","Model samples_bg_corr"),showWarnings = FALSE,recursive=TRUE)
+    dir.create(file.path(predpath,"HMCR",type,"win_png"),showWarnings = FALSE,recursive = TRUE)
 		dir.create(file.path(predpath,"HMCR",type,"win"),showWarnings = FALSE,recursive = TRUE)
-	  	gc()
-		Scores  <-  numeric()
+	  
+    gc()
+		
+    Scores  <-  numeric()
 		
 		### attpempt to store the background correction data. bg correction storage in "find_spectrum.R" is done in arrays per window 
 		### scan * m/z * sample. Here processing is sample wise (in "find_spectrum.R", the whole sampleset is in memory at once),

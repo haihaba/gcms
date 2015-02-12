@@ -1,14 +1,14 @@
 ##' Function spec2NIST2
 ##' 
 ##' Function spec2NIST2
-##' @param projectpath
+##' @param predpath
 ##' @param type
 ##' @param all
-spec2NIST2<-function(projectpath,type,all=FALSE){
+spec2NIST2<-function(predpath,type,all=FALSE){
 	
-	load(file.path(projectpath,"Aligned","SCAN_RANGE.Rdata"))
-	load(file.path(projectpath,"HMCR",type,"MVA_DATA.Rdata"))
-	load(file.path(projectpath,"Aligned","files.Rdata"))
+	load(file.path(predpath,"Aligned","SCAN_RANGE.Rdata"))
+	load(file.path(predpath,"HMCR",type,"MVA_DATA.Rdata"))
+	load(file.path(predpath,"Aligned","files.Rdata"))
 	filenames <-  sub("(.+)[.][^.]+$", "\\1", basename(files))
 	
 	if(!all){
@@ -27,10 +27,10 @@ spec2NIST2<-function(projectpath,type,all=FALSE){
 		NAME	<-	as.matrix(VARID1[choice])
 		ID		<-	cbind(round(RT,2),NAME)
 		
-		#load(file.path(projectpath,"sampleinfo.Rdata"))
+		#load(file.path(predpath,"sampleinfo.Rdata"))
 		
-	 	if(file.exists(file.path(projectpath,"ALKANE_SERIE","RT_INFO.Rdata"))){
-	 		load(file.path(projectpath,"ALKANE_SERIE","RT_INFO.Rdata"))
+	 	if(file.exists(file.path(predpath,"ALKANE_SERIE","RT_INFO.Rdata"))){
+	 		load(file.path(predpath,"ALKANE_SERIE","RT_INFO.Rdata"))
 	 		RI	<-	approxExtrap(RT_INFO[,2],RT_INFO[,1],RT)$y
 		
 		}else
@@ -44,16 +44,16 @@ spec2NIST2<-function(projectpath,type,all=FALSE){
 			if(xlsORtxt == 1){
 				require(xlsReadWrite)
  			
- 			write.xls(out,file=file.path(projectpath,"HMCR",type,"Spectra.xls"))
+ 			write.xls(out,file=file.path(predpath,"HMCR",type,"Spectra.xls"))
 		
 		}else{
-			write.table(out,file=file.path(projectpath,"HMCR",type,"Spectra.txt"),quote=FALSE,sep="\t")
+			write.table(out,file=file.path(predpath,"HMCR",type,"Spectra.txt"),quote=FALSE,sep="\t")
 		}
 
-		if(file.exists(file.path(projectpath,"HMCR",type,"Spectrum.txt")))
-			file.remove(file.path(projectpath,"HMCR",type,"Spectrum.txt"))
+		if(file.exists(file.path(predpath,"HMCR",type,"Spectrum.txt")))
+			file.remove(file.path(predpath,"HMCR",type,"Spectrum.txt"))
 	
-		fid	<-	file(file.path(projectpath,"HMCR",type,"Spectrum.txt"),"a+")
+		fid	<-	file(file.path(predpath,"HMCR",type,"Spectrum.txt"),"a+")
 	
 		for(j in 1:nrow(ID)){
 			s					<-	S[j,]

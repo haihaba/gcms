@@ -1,5 +1,4 @@
-ARmethod1 <-
-function(X,projectpath)
+ARmethod1 <- function(X,projectpath)
 {
 	require(MASS)
 	X[X<0]	<-	0

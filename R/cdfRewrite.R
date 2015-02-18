@@ -22,40 +22,7 @@ cdfRewrite <-function(projectpath,filepath){
   }
   
   
-  ## create directory for CDF raw data import
-  ##dir.create(file.path(projectpath,"Filtered","CDF"),showWarnings=FALSE,recursive=TRUE)
-  
-  
-  
-  
-  
-  ## Settings Handling
-  #SETTINGS  <-  NULL
-  
-  
-  ## Check if a setting file exists, if yes read 
-  ## it else create by setting default values
-  #if(file.exists(file.path(projectpath,"SETTINGS.Rdata"))){
-  #  load(file.path(projectpath,"SETTINGS.Rdata"))
-  #  FL   <- SETTINGS$FL
-  #  MZP  <- SETTINGS$MZP
-  #  MZR  <- SETTINGS$MZR
-  #}else{
-  #  cat("No filterlength settings found, using FL = 0.\n")
-  #  FL  <-  0
-  #  cat("No mass channel precision settings found, using MZP = 0.\n")
-  #  MZP <-  0
-  #  cat("No mass channel range settings found, using MZR min = 50, max = 800.\n")
-  #  MZR <-  c(50,800)
-  #}
-  
-  
-  ## Check if maximum MZ Rdata file exist, then 
-  ## load, otherwise create the variable maxMZ
-  #if(file.exists(file.path(projectpath,"maxMZ.Rdata")))
-  #  load(file.path(projectpath,"maxMZ.Rdata"))
-  #else
-  #  maxMZ <- numeric()
+
   
   
   
@@ -71,6 +38,15 @@ cdfRewrite <-function(projectpath,filepath){
   for(i in 1:length(cdffiles)){
     errorcounter  <- 0
     
+    
+    ## ncdf files from agilent
+    ## variabels
+    ## error_log: 63 chars, not useful
+    ## a_d_sampling_rate, -9999, not useful
+    ## a_d_coaddition_factor, -9999 not useful
+    ## scan_acquisition_time, decimal seconds useful
+    ## scan_duration, -9999, not useful
+    ## inter_scan_time, 
     
     ## ncdf file import
     cdffile       <- open.ncdf(cdffiles[i])

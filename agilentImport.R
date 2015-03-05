@@ -67,6 +67,14 @@ readDFile<-function(pathname){
   thirdPeriod<-agilent[seq(5773,rawExtractLength,4)]
   fourthPeriod<-c(agilent[seq(5770,rawExtractLength,4)][-1],0)
   
+  ## extract third and fourth between for the scan time
+  cat('...extracting scantimes...\n')
+  betweenSecond<-betweenSequence(secondPeriod,counts)
+  betweenThird<-betweenSequence(thirdPeriod,counts)
+  betweenFourth<-betweenSequence(fourthPeriod,counts)
+  scanTime<-betweenSecond[seq(1,8*numberOfScans,8)]*65536+betweenThird[seq(1,8*numberOfScans,8)]*256+betweenFourth[seq(1,8*numberOfScans,8)]
+  scanTime<-round(scanTime/1000/60,4)
+  
   ## extract main sequence, reverse them scan wise
   mainSequence<-function(period,counts){
     tempSequence<-NULL
@@ -116,7 +124,7 @@ readDFile<-function(pathname){
       }
     } 
   }
-  
+  rownames(fullData)<-scanTime
   return(fullData)
   
 }

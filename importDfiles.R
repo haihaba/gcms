@@ -3,7 +3,7 @@
 
 ### loading cdf file
 library(ncdf)
-cdffile<-open.ncdf('~/Programming//R//importAgilent//0107.CDF')
+cdffile<-open.ncdf('~/Google Drive/Programming/R//importAgilent//0107.CDF')
 cdffileMz    <- get.var.ncdf(cdffile,varid=cdffile$var[["mass_values"]])
 cdffileInt<- get.var.ncdf(cdffile,varid=cdffile$var[["intensity_values"]])
 cdffileTime  <- get.var.ncdf(cdffile,varid=cdffile$var[["scan_acquisition_time"]])
@@ -14,7 +14,7 @@ close.ncdf(cdffile)
 
 
 ### loading agilent file
-to.read<-file('~/Programming//R//importAgilent//0107.D//DATA.MS','rb')
+to.read<-file('~/Google Drive/Programming/R//importAgilent//0107.D//DATA.MS','rb')
 agilent<-readBin(to.read,integer(),size=1,signed=FALSE,n=20000000)
 close(to.read)
 

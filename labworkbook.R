@@ -399,3 +399,42 @@ readDFile<-function(filename){
   
 }
 
+
+### 5th March
+### series of zeros
+plot(agilent[seq(1675981,1760317,12)])
+
+### series not known yet, values from 0 to 12 
+plot(agilent[seq(1675982,1760318,12)])
+
+### series not known yet
+plot(agilent[seq(1675983,1760319,12)])
+
+### series could be value to add for TIC or INT
+plot(agilent[seq(1675984,1760320,12)])
+
+### series of zeros
+plot(agilent[seq(1675985,1760321,12)])
+
+### series of stepwise increasing values
+plot(agilent[seq(1675986,1760322,12)])
+
+### series of multiplier x255 for microseconds 
+plot(agilent[seq(1675987,1760323,12)])
+
+### series of values to add for microseconds
+plot(agilent[seq(1675988,1760324,12)])
+
+### series of zero values
+plot(agilent[seq(1675989,1760325,12)])
+
+### series looks like a multiplier for the TIC
+plot(agilent[seq(1675990,1760326,12)])
+
+### series looks like a addition or multiplier for TIC
+plot(agilent[seq(1675991,1760327,12)])
+
+### series looks pretty random, zeros for the non recording part
+plot(agilent[seq(1675992,1760328,12)])
+
+###

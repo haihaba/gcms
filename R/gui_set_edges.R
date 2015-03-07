@@ -253,3 +253,177 @@ gui_set_edges<-function(projectpath){
 	
 }
 
+##' A_E Function, Automatic Edges
+##' 
+##' Probably the funciton to set automatic edges for the processing windows
+##' @param DATA
+##' @param Nmin
+##' @param Nmax
+##' @return edges 
+A_E <- function(DATA,Nmin,Nmax){
+  edges  <-	c(1,length(DATA))
+  N		<-	0.5
+  while(max(diff(edges)) > Nmax){
+    n		<-	which.max(diff(edges)) 
+    range	<-	(edges[n] + Nmin):(edges[n+1] - Nmin)
+    x		<-	E_peak_pick(DATA[range],median(DATA[range]),Nmin)
+    
+    if(!any(x$peak>0)){
+      N	<-	N*1.5
+      if(N > 7){
+        n	<-	which.min(DATA[range])
+        
+        if(length(n) > 1){
+          k	<-	round(length(n)/2)
+          n	<-	n[k]
+        }
+        
+        N			<-	0.5
+        x$peak[n]	<-	1
+      }
+    }else
+      N	<-	0.5
+    edges	<-	sort(c(edges,range[which(x$peak>0)]))
+  }
+  
+  edges <-  edges[!(edges == 1 | edges == length(DATA) | edges > max(which(DATA>0)) | edges < min(which(DATA>0)))]
+}
+
+##' Function replot
+##' 
+##' Function replot
+##' @param edges
+##' @param DATA
+##' @param zoomwidth
+##' @param maintext
+replot<-function(edges,DATA,zoomwidth,maintext){
+  
+  ## setting zoomwidth borders for no zoom
+  if(sum(zoomwidth) == 0){
+    zoomwidth[1]  <-  1
+    zoomwidth[2]  <-  ncol(DATA)
+    
+    ## setting zoomwidth borders for zoom
+  }else{
+    zoomwidth[1]	<-	max(1,zoomwidth[1])
+    zoomwidth[2]  <-  min(zoomwidth[2],ncol(DATA))
+  }
+  
+  
+  ymax	<-	max(DATA[,zoomwidth[1]:zoomwidth[2]])*1.05
+  #par(new=FALSE)
+  
+  #for(i in 1:nrow(DATA)){
+  averagedData<-apply(DATA,2,mean)
+  plot(zoomwidth[1]:zoomwidth[2],averagedData[zoomwidth[1]:zoomwidth[2]], xlim=c(zoomwidth[1],zoomwidth[2]),ylim=c(0,ymax), type="l", main=maintext,xlab="",ylab="")
+  #	plot(zoomwidth[1]:zoomwidth[2],DATA[i,zoomwidth[1]:zoomwidth[2]],xlim=c(zoomwidth[1],zoomwidth[2]),ylim=c(0,ymax),type="l",col=i,main=maintext,xlab="",ylab="")
+  #par(new=TRUE)
+  #}
+  abline(v=edges,col="red",lwd=2)
+}
+
+##' Function E_peak_pick
+##' 
+##' Function E_peak_pick
+##' @param x
+##' @param NL
+##' @param min_win
+##' @return x 
+E_peak_pick <- function(x,NL,min_win){
+  require(signal)
+  #xd1 <- -sav.gol(x,11,3,1)
+  xd1 <-  sgolayfilt(x,3,11,1)
+  N1	<-	which(x < NL)
+  N2	<-  numeric(length(x))
+  
+  
+  for(i in 3:(length(x)-2)){
+    if(xd1[i-2] < 0  & xd1[i-1]<0 & xd1[i+1]>0 & xd1[i+2]>0 &  sum(N1 == i)==1)
+      N2[i]	<- 1
+  }
+  
+  N	<-	intersect(N1,which(N2 == 1))
+  
+  if(length(N)==0)
+    return()
+  
+  if(length(N) != 1)
+    while(min(diff(N)) < min_win){
+      p1	<- 	which.min(diff(N))
+      p2	<-	p1+1
+      
+      if(x[N[p1]] < x[N[p2]])
+        N <- N[-p1]
+      else
+        N <- N[-p2]
+      
+      if(length(N) == 1)
+        break
+    }
+  
+  xpeak		<-	numeric(length(x))
+  xpeak[N]	<-	x[N]
+  x			<-	list(peak = xpeak, out = x)
+  
+}
+
+
+##' Function sgolayfilt
+##' 
+##' Function sgolayfilt
+##' @param x
+##' @param p
+##' @param n
+##' @param m
+##' @param ts
+sgolayfilt<-function(x, p = 3, n = p + 3 - p%%2, m = 0, ts = 1){
+  
+  len = length(x)
+  if (class(p) == "sgolayFilter" || (!is.null(dim(p)) && dim(p) > 1)){
+    F = p
+    n = nrow(F)
+  }else
+    F = sgolay(p, n, m, ts)
+  k = floor(n/2)
+  
+  #z = filter(F[k+1,n:1], 1, x)
+  
+  filt  <-  F[k+1,n:1]
+  z 		<-	na.omit(stats:::filter(c(rep(0,length(filt) - 1), x), filt, sides = 1))
+  c(F[1:k,] %*% x[1:n], z[n:len], F[(k+2):n,] %*% x[(len-n+1):len])
+}
+
+##' Function sgolay
+##' 
+##' Function sgolay
+##' @param p
+##' @param n
+##' @param ts
+##' @return F 
+sgolay<-function(p, n, m = 0, ts = 1){ 
+  
+  library(MASS)
+  if (n %% 2 != 1)
+    stop("sgolay needs an odd filter length n")
+  
+  if (p >= n)
+    stop("sgolay needs filter length n larger than polynomial order p")
+  
+  F = matrix(0., n, n)
+  k = floor(n/2)
+  for (row  in  1:(k+1)) {
+    C = ( ((1:n)-row) %*% matrix(1, 1, p+1) ) ^ ( matrix(1, n) %*% (0:p) )
+    A = ginv(C)
+    F[row,] = A[1+m,]
+  }
+  
+  F[(k+2):n,] = (-1)^m * F[k:1,n:1]
+  
+  if (m > 0)
+    F = F * prod(1:m) / (ts^m)
+  
+  class(F) = "sgolayFilter"
+  F
+}
+
+

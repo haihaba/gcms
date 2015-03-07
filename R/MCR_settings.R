@@ -329,3 +329,172 @@ MCR_settings <-function(projectpath){
 	
 }
 
+
+##' Function sfd_par
+##' 
+##' Function sfd_par
+##' @param X
+##' @param num
+##' @param exclude
+##' @return object, j, md
+sfd_par<-function(X,num,exclude = nrow(as.matrix(X))+1){
+  
+  N				<-  nrow(as.matrix(X))
+  K				<-  ncol(as.matrix(X))
+  
+  if(num == (N-length(exclude))){
+    sel <-  (1:N)[-exclude]
+    return(list(object=sel))
+  }
+  
+  
+  D			<-	obj_eu(X)
+  diag(D)		<-	2*max(D)
+  MD			<-	j	<-	0
+  
+  for(run in 1:500){
+    object	<-	sample((1:N)[-exclude])[1:num]
+    OK			<-	3
+    md			<-	0
+    number	<-	1
+    
+    while(OK){
+      XD	<-	D[object,object]
+      OK	<-	OK-1
+      nk	<-	which.min(XD)
+      k	<-	col(XD)[nk]
+      
+      if(OK)
+        n	<-	row(XD)[nk]*(OK != 2) + k*(OK == 2)
+      else
+        n	<-	number
+      
+      number 		<-  number + (OK==0)
+      
+      if(!OK)
+        OK	<-	(number <= num)
+      
+      obs			<-	object[-n]
+      ex_object	<-	setdiff((1:N)[-exclude],obs)
+      I			<-	which.max(apply(D[obs,ex_object],2,min))
+      
+      for(jj in I){
+        obs[num]	<-	ex_object[jj]
+        
+        if((md <= min(D[obs,obs])) & sum(abs(sort(obs)-sort(object))) > 0){
+          XD				<-	D[obs,obs]
+          diag(XD)		<-	0
+          
+          if(md == min(D[obs,obs])){
+            
+            if(j < sum(XD)/2){
+              md			<-	min(D[obs,obs])
+              object		<-	sort(obs)
+              j			<-	sum(XD)/2
+              number		<-	number*(OK != 1) + (OK == 1)
+              
+              if(OK>1)
+                OK	<-	3
+            }
+          }else{
+            md		<-	min(D[obs,obs])
+            object	<-	sort(obs)	
+            j		<-	sum(XD)/2
+            number	<-	number*(OK != 1) + (OK == 1)
+            
+            if(OK>1)
+              OK	<-	3
+          }
+        }
+      }
+    }
+    
+    XD				<-	D[object,object]
+    md				<-	min(D[object,object])
+    
+    diag(XD)	<-	0
+    j			<-	sum(XD)/2
+    object		<-	sort(object)
+    
+    if(MD < md){
+      J	<-	j
+      sel	<-	object
+      MD	<-	md
+    }
+  }
+  list(object=sel,j=J,md=MD)
+}
+
+##' Function X
+##' 
+##' Function X
+##' @param X
+##' @return D
+obj_eu<-function(X)
+  D <-  as.matrix(dist(X,upper=TRUE,diag=TRUE))
+
+
+##' Function replot_mcr
+##' 
+##' Function replot_mcr
+##' @param x
+##' @param y
+##' @param maintext
+##' @param incl
+##' @param excl
+##' @param numfiles
+##' @param set1
+##' @param set2
+##' @param seltype
+##' @param plotlabels
+##' @param pred 
+replot_mcr<-function(x,y,maintext,incl,excl,numfiles,set1,set2,seltype=(!missing(set1) & !missing(set2)),plotlabels = TRUE,pred){
+  
+  if(seltype == 1){
+    color <-  2*(1:numfiles %in% set1)+4*(1:numfiles %in% set2)+3*(1:numfiles %in% pred)+(1:numfiles %in% setdiff(1:numfiles,c(set1,set2,pred)))
+    
+  }else{
+    color <-  2*(1:numfiles %in% incl)+(1:numfiles %in% excl)+3*(1:numfiles %in% pred)
+  }
+  
+  plot(x,y,xlim=c(range(x)),ylim=range(y),main=maintext,xlab="t[1]",ylab="t[2]",col=color,cex=0.9,pch=16)
+  
+  if(plotlabels)
+    text(x,y,pos=4,cex=0.7)
+}
+
+
+##' Function pca
+##' 
+##' Function pca
+##' @export
+##' @param X
+##' @param comp
+##' @return vec, p
+pca<-function(X,comp){
+  
+  #   Calculates Principal componets of X by calc eigvectors of X'*X or X*X'
+  #   Depending on whats easiest to calculate....
+  
+  if(nrow(as.matrix(X)) < ncol(as.matrix(X))){
+    tX  <-  t(X)
+    p 	<-  eigen(X%*%tX)$vectors[,1:comp]
+    
+    if(comp>1){
+      p <-  apply(p,2,function(p) tX%*%p)
+      p <-  apply(p,2,function(p) p/sqrt(sum(p^2)))
+      
+    }else{
+      p	<-	tX%*%p
+      p 	<-	p/sqrt(sum(p^2))
+    }
+    
+  }else
+    p		<-	eigen(t(X)%*%X)$vectors[,1:comp]
+  
+  vec		<-	X%*%p
+  vecp	<-	list(vec=vec,p=p)
+}
+
+
+

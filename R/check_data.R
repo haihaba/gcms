@@ -44,8 +44,6 @@ check_data <- function(projectpath){
 
 	outliers 	<-  character()
 	k			<- 1
-        #X11.options(type="cairo")
-        #X11()
 
         replot=FALSE
 

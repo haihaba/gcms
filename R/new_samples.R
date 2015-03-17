@@ -675,7 +675,6 @@ varnamegen <- function(intervals,peks,start)
 find_spectrum2<-function(predpath,projectpath){
   
   require(MASS)
-  #X11.options(type="cairo")
   datamenu  <-  character()
   
   if(file.exists(file.path(projectpath,"HMCR","REG","MVA_DATA.Rdata")))

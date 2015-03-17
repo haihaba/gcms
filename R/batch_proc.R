@@ -105,7 +105,6 @@ read_win <- function(projectpath,type,win){
 find_spectrum<-function(projectpath,incl,extra,windowlist){
   
   require(MASS)
-  X11.options(type="cairo")
   load(file.path(projectpath,"Aligned","files.Rdata"))
   load(file.path(projectpath,"Edges","edges.Rdata"))
   load(file.path(projectpath,"Aligned","shift.Rdata"))

@@ -5,9 +5,7 @@
 ##' @param projectpath
 gui_set_edges<-function(projectpath){
 	
-	#X11.options(type="Xlib")
 	dir.create(file.path(projectpath,"Edges"),showWarnings=FALSE)
-	#do_log(projectpath,"Setting edges...")
 		
 	load(file.path(projectpath,"Aligned","files.Rdata"))
 	load(file.path(projectpath,"Aligned","shift.Rdata"))
@@ -19,7 +17,6 @@ gui_set_edges<-function(projectpath){
 	menuvector  		<-	c(TRUE,FALSE,FALSE,FALSE,TRUE)
 	menulist 			<-	c("Load data","Load old edges","Auto edges","Plot controls","Quit")
 	k  					<-	1
-	#X11()
 	
 	while(k){
 		cat("Number of edges:\t",length(edges),"\n============================\n")

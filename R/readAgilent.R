@@ -245,11 +245,14 @@ readDFile<-function(pathname){
   
   ## extract second, third and fourth between for the SCAN TIME
   cat('...extracting scantimes...\n')
-  betweenFirst<-betweenFirst(firstPeriod,counts)
+  betweenFirst<-betweenSequence(firstPeriod,counts)
   betweenSecond<-betweenSequence(secondPeriod,counts)
   betweenThird<-betweenSequence(thirdPeriod,counts)
   betweenFourth<-betweenSequence(fourthPeriod,counts)
-  scanTime<-betweenSecond[seq(1,8*numberOfScans,8)]*65536+betweenThird[seq(1,8*numberOfScans,8)]*256+betweenFourth[seq(1,8*numberOfScans,8)]
+  scanTime<-betweenFirst[seq(1,8*numberOfScans,8)]*16777216
+                          +betweenSecond[seq(1,8*numberOfScans,8)]*65536
+                          +betweenThird[seq(1,8*numberOfScans,8)]*256
+                          +betweenFourth[seq(1,8*numberOfScans,8)]
   scanTime<-round(scanTime/1000/60,4)
   
   ## extract main sequence, reverse them scan wise

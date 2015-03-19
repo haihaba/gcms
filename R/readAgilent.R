@@ -7,7 +7,7 @@
 ##' @return Xbc, SCAN_INFO, SCAN_RANGE, file  
 readAgilent <-function(projectpath,filepath){
   #require(ncdf)
-  require(tcltk)
+  #require(tcltk)
   
   
   ### file selection by TclTk
@@ -79,53 +79,21 @@ readAgilent <-function(projectpath,filepath){
     ## ncdf file import
     errorcounter  <- 0
     cat("File ",basename(cdffiles[i]), "opened. ",paste("(",i,"/",length(cdffiles),")",sep=""),"\n")
-    dFile       <- readDFile(cdffiles[i])
-    TIME  <- dFile$importScanTime
-    MZmin <- min(dFile$importMz)
-    MZmax <- max(dFile$importMz)
-    counts <- dFile$importCount
-    numberOfScans <- length(counts)
-    importMz <- dFile$importMz
-    importInt <- dFile$importInt
+    DATA       <- readDFile(cdffiles[i])
+    TIME  <- as.numeric(rownames(DATA))
+    importMz <- as.numeric(colnames(DATA))
+    MZmin <- min(importMz)
+    MZmax <- max(importMz)x
     
-    
-    
-    ## Data imoprt for Agilent Chemstation CDF files 
-    ## For ther CDF's eventually some adaptation is needed.
-
-    cat('...assembling data matrix...\n')
-    DATA<-matrix(rep(0,numberOfScans*max(importMz)),numberOfScans,max(importMz))
-    position<-1
-    for(ii in 1:numberOfScans){
-      
-      for(jj in counts[ii]){
-        
-        if(counts[ii]){
-          DATA[ii,importMz[position:(position+jj-1)]]<-importInt[position:(position+jj-1)]
-          position<-position+jj
-        }else{
-          position<-position+1
-        }
-      } 
-    }
     
     
     cat("File ",basename(cdffiles[i]), "closed.\n")
-    
-    
-    ## the raw CDF import variables are discarded to free memory
-    #rm(INT,MZ,count)
-    
-    
     
     ## Smoothing of the data, Xbc is the smoothed (moving average) data 
     ## matrix with rows mz and columns for data points
     cat(paste("Smoothing (FL = ",FL,")\n",sep=""))
     Xbc <- baseline(DATA,projectpath,FL)
     rm(DATA)
-    
-    
-    
     
     ## prepare and save data
     
@@ -145,7 +113,7 @@ readAgilent <-function(projectpath,filepath){
     save(Xbc,SCAN_INFO,SCAN_RANGE,file = filepaths[i])
     rm(TIME)
     
-    ## when funciton argument 'filepath' missing, delete the variables
+    ## when function argument 'filepath' missing, delete the variables
     ## otherwise they are still needed to return to the caller
     if(missing(filepath))
       rm(Xbc,SCAN_INFO,SCAN_RANGE)
@@ -154,6 +122,7 @@ readAgilent <-function(projectpath,filepath){
     
   }
   
+  ### save maxMZ data
   save(maxMZ,file=file.path(projectpath,"maxMZ.Rdata"))
   
   
@@ -199,14 +168,19 @@ baseline <- function(X,projectpath,FL = 0){
 }
 
 
-
+##' Function readDFile
+##' 
+##' Function readDFile
+##' @param pathname       the pathname of the directory containing the data to import
+##' @return outData       list containing importInt, importMz, importCount, importScanTime
+##' @export
 readDFile<-function(pathname){
   
   filename<-file.path(pathname,'DATA.MS')
   
   cat('Opening Agilent file...\n')
   to.read<-file(filename,'rb')
-  agilent<-readBin(to.read,integer(),size=1,signed=FALSE,n=20000000)
+  agilent<-readBin(to.read,integer(),size=1,signed=FALSE,n=20000000, endian='little')
   close(to.read)
   
   ### preparing vector with counts per scan
@@ -269,7 +243,7 @@ readDFile<-function(pathname){
   thirdPeriod<-agilent[seq(5773,rawExtractLength,4)]
   fourthPeriod<-c(agilent[seq(5770,rawExtractLength,4)][-1],0)
   
-  ## extract third and fourth between for the SCAN TIME
+  ## extract second, third and fourth between for the SCAN TIME
   cat('...extracting scantimes...\n')
   betweenSecond<-betweenSequence(secondPeriod,counts)
   betweenThird<-betweenSequence(thirdPeriod,counts)
@@ -312,8 +286,27 @@ readDFile<-function(pathname){
   
   importInt<-(mainThird+mainFourth)
   
+  cat('...assembling data matrix...\n')
+  DATA<-matrix(rep(0,numberOfScans*max(importMz)),numberOfScans,max(importMz))
+  position<-1
+  for(ii in 1:numberOfScans){
+    
+    for(jj in counts[ii]){
+      
+      if(counts[ii]){
+        DATA[ii,importMz[position:(position+jj-1)]]<-importInt[position:(position+jj-1)]
+        position<-position+jj
+      }else{
+        position<-position+1
+      }
+    } 
+  }
   
-  outData<-list(importInt=importInt, importMz=importMz, importCount=counts, importScanTime=scanTime)
-  return(outData)
+  rownames(DATA)<-scanTime
+  colnames(DATA)<-seq(1:dim(DATA)[2])
+  
+  return(DATA)
+  #outData<-list(importInt=importInt, importMz=importMz, importCount=counts, importScanTime=scanTime)
+  #return(outData)
   
 }

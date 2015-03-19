@@ -67,7 +67,7 @@ readDFile<-function(pathname){
   thirdPeriod<-agilent[seq(5773,rawExtractLength,4)]
   fourthPeriod<-c(agilent[seq(5770,rawExtractLength,4)][-1],0)
   
-  ## extract third and fourth between for the scan time
+  ## extract third and fourth between for the SCAN TIME
   cat('...extracting scantimes...\n')
   betweenSecond<-betweenSequence(secondPeriod,counts)
   betweenThird<-betweenSequence(thirdPeriod,counts)
@@ -86,14 +86,15 @@ readDFile<-function(pathname){
     return(tempSequence)
   }
   
-  ### extract main data
+  ### extract main data for INT and MZ
   cat('...extract intensity and Mz data...\n')
   mainFirst<-mainSequence(firstPeriod,counts)
   mainSecond<-mainSequence(secondPeriod,counts)
   mainThird<-mainSequence(thirdPeriod,counts)
   mainFourth<-mainSequence(fourthPeriod,counts)
   
-  ### calculate MZs
+  ### calculate MZs. This will result in the *real*, used MZs. For the case that the
+  ### detector is switched off, zero values are included.
   importMz<-round(mainFirst*12.8+mainSecond*0.05)
   
   ### calculate intensity values
@@ -125,6 +126,7 @@ readDFile<-function(pathname){
     } 
   }
   rownames(fullData)<-scanTime
+  colnames(fullData)<-importMz
   return(fullData)
   
 }

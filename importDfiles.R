@@ -15,7 +15,7 @@ close.ncdf(cdffile)
 
 ### loading agilent file
 to.read<-file('~/Google Drive/Programming/R//importAgilent//0107.D//DATA.MS','rb')
-agilent<-readBin(to.read,integer(),size=1,signed=FALSE,n=20000000)
+agilent.big<-readBin(to.read,integer(),size=1,signed=FALSE,n=20000000, endian = 'big')
 close(to.read)
 
 agilent<-readBin(to.read,character(), n=7000)
@@ -93,6 +93,7 @@ intToBin <- function(x, ndigits=0, b=2){
 
 ### convert binary to decimal
 binToInt <- function(x){
+  x<-rev(x)
   if(any(x>1))
     stop(cat('x is not binary'))
   multiplicator<-1
@@ -368,13 +369,13 @@ readDFile<-function(filename){
   importMz<-round(mainFirst*12.8+mainSecond*0.05)
   
   ### calculate intensity values
-  mainFourth[which(floor(mainThird/64)==3)]<-(mainFourth[which(floor(mainThird/64)==3)]*512)
-  mainFourth[which(floor(mainThird/64)==2)]<-(mainFourth[which(floor(mainThird/64)==2)]*64)
-  mainFourth[which(floor(mainThird/64)==1)]<-(mainFourth[which(floor(mainThird/64)==1)]*8)
+  mainFourth[which(floor(mainThird/64)==3)]<-(mainFourth[which(floor(mainThird/64)==3)]*512) ### 512 is 9 full bit
+  mainFourth[which(floor(mainThird/64)==2)]<-(mainFourth[which(floor(mainThird/64)==2)]*64) ### 64 is 6 full bit
+  mainFourth[which(floor(mainThird/64)==1)]<-(mainFourth[which(floor(mainThird/64)==1)]*8) ### 8 is 3 full bit
   
-  mainThird[which(floor(mainThird/64)==3)]<-((mainThird[which(floor(mainThird/64)==3)] %% 192)*131072)
-  mainThird[which(floor(mainThird/64)==2)]<-((mainThird[which(floor(mainThird/64)==2)] %% 128)*16384)
-  mainThird[which(floor(mainThird/64)==1)]<-((mainThird[which(floor(mainThird/64)==1)] %% 64)*2048)
+  mainThird[which(floor(mainThird/64)==3)]<-((mainThird[which(floor(mainThird/64)==3)] %% 192)*131072) ## 131072 is 17 full bit
+  mainThird[which(floor(mainThird/64)==2)]<-((mainThird[which(floor(mainThird/64)==2)] %% 128)*16384) ### 16384 is 14 full bit
+  mainThird[which(floor(mainThird/64)==1)]<-((mainThird[which(floor(mainThird/64)==1)] %% 64)*2048) ### 2048 is 11 full bit
   mainThird[which(floor(mainThird/64)==0)]<-(mainThird[which(floor(mainThird/64)==0)]*256)
   
   importInt<-(mainThird+mainFourth)
@@ -398,4 +399,5 @@ readDFile<-function(filename){
   return(fullData)
 
 }
+
 

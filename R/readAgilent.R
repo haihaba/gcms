@@ -83,7 +83,7 @@ readAgilent <-function(projectpath,filepath){
     TIME  <- as.numeric(rownames(DATA))
     importMz <- as.numeric(colnames(DATA))
     MZmin <- min(importMz)
-    MZmax <- max(importMz)x
+    MZmax <- max(importMz)
     
     
     
@@ -245,6 +245,7 @@ readDFile<-function(pathname){
   
   ## extract second, third and fourth between for the SCAN TIME
   cat('...extracting scantimes...\n')
+  betweenFirst<-betweenFirst(firstPeriod,counts)
   betweenSecond<-betweenSequence(secondPeriod,counts)
   betweenThird<-betweenSequence(thirdPeriod,counts)
   betweenFourth<-betweenSequence(fourthPeriod,counts)
@@ -305,8 +306,5 @@ readDFile<-function(pathname){
   rownames(DATA)<-scanTime
   colnames(DATA)<-seq(1:dim(DATA)[2])
   
-  return(DATA)
-  #outData<-list(importInt=importInt, importMz=importMz, importCount=counts, importScanTime=scanTime)
-  #return(outData)
-  
+  return(DATA) 
 }

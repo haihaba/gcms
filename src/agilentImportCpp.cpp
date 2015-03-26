@@ -28,13 +28,25 @@ int16_t read16_be(istream& stream)
         (b[0] << 8) );
 }
 
+unsigned long long readCertainBits(unsigned long long raw, int numOfBits, int readFrom, int readTo){
+  unsigned long long result;
+  int shift_number = numOfBits - readTo;
+  result = (unsigned long long)pow(2, (readTo - readFrom + 1)) - 1;
+	result = result << shift_number;
+	result = raw & result;
+	result = result >> shift_number;
+	return result;
+}
+
 float encodeMZ(int16_t mz){
-  return((float)(mz / 20));
+  return((float)((float)mz / 20));
 }
 
 int encodeIntensity(int16_t intensity){
-  int shiftNumber = (intensity >> 13) * 3;
-  return(intensity << shiftNumber);
+  int base = readCertainBits(intensity, 16, 1, 2);
+  int data = readCertainBits(intensity, 16, 3, 16);
+  int encodedIntensity = data << (base * 3);
+  return(encodedIntensity);
 }
 
 // [[Rcpp::export]]
@@ -42,7 +54,7 @@ List agilentImportCpp(string filename){
   List agilent;
   vector<int> fixedPattern;
   vector<int> counts;
-  vector<int> mz;
+  vector<float> mz;
   vector<int> intensity;
   
   ifstream fbin (filename.c_str(), ios::binary | ios::in);
@@ -56,30 +68,31 @@ List agilentImportCpp(string filename){
   fbin.seekg(HEADERSIZE * sizeof(char));
   
   int count = -1;
-  int scanIndex = 0;
-  vector<int> scanMZ;
+  vector<float> scanMZ;
   vector<int> scanIntensity;
   while(!fbin.eof()){
     for(int i = 0; i < 11; i++)
       fixedPattern.push_back(read16_be(fbin));
     count = read16_be(fbin);
+    if(count == 0)
+      break;
+      
     counts.push_back(count);
     // Highest peak in scan
     read16_be(fbin);
     read16_be(fbin);
     
+    scanMZ.clear();
+    scanIntensity.clear();
     // Get spectrometry data
     for(int j = 0; j < count; j++){
       scanMZ.push_back(encodeMZ(read16_be(fbin)));
       scanIntensity.push_back(encodeIntensity(read16_be(fbin)));
     }
     reverse(scanMZ.begin(), scanMZ.end());
-    mz.push_back(scanMZ);
     reverse(scanIntensity.begin(), scanIntensity.end());
-    intensity.push_back(scanIntensity);
-    scanIndex++;
-    if(scanIndex > 8000)
-      break;
+    mz.insert(mz.end(), scanMZ.begin(), scanMZ.end());
+    intensity.insert(intensity.end(), scanIntensity.begin(), scanIntensity.end());
   }
   cout << "\n";
   agilent["fixed_pattern"] = fixedPattern;
@@ -90,8 +103,6 @@ List agilentImportCpp(string filename){
   fbin.close();
   return agilent;
 }
-
-
 
 
 

@@ -7,6 +7,10 @@ using namespace std;
 #define MZSIZE 16
 #define INTSIZE 16
 #define SCANSIZE 16
+#define MZBASE 20
+#define INTENSITYHEADER 2
+#define SHIFTBASE 3
+#define MILISECOND 1000
 
 
 int getFileSize(string filename){
@@ -19,7 +23,7 @@ int getFileSize(string filename){
   return(end - begin);
 }
 
-int16_t read16_be(istream& stream)
+uint16_t read16_be(istream& stream)
 {
     uint8_t b[2];
     stream.read((char *)b,2);
@@ -39,23 +43,24 @@ unsigned long long readCertainBits(unsigned long long raw, int numOfBits, int re
 }
 
 float encodeMZ(int16_t mz){
-  return((float)((float)mz / 20));
+  return((float)((float)mz / MZBASE));
 }
 
 int encodeIntensity(int16_t intensity){
-  int base = readCertainBits(intensity, 16, 1, 2);
-  int data = readCertainBits(intensity, 16, 3, 16);
-  int encodedIntensity = data << (base * 3);
+  int intensityHeader = readCertainBits(intensity, 16, 1, INTENSITYHEADER);
+  int intensityData = readCertainBits(intensity, 16, INTENSITYHEADER + 1, 16);
+  int encodedIntensity = intensityData << (intensityHeader * SHIFTBASE);
   return(encodedIntensity);
 }
 
 // [[Rcpp::export]]
 List agilentImportCpp(string filename){
   List agilent;
-  vector<int> fixedPattern;
+  vector<int> fixedPatterns;
   vector<int> counts;
   vector<float> mz;
   vector<int> intensity;
+  vector<float> scanTime;
   
   ifstream fbin (filename.c_str(), ios::binary | ios::in);
   if (!fbin) {
@@ -67,16 +72,28 @@ List agilentImportCpp(string filename){
   fbin.seekg (0, ios::beg);
   fbin.seekg(HEADERSIZE * sizeof(char));
   
-  int count = -1;
+  unsigned int count, timePrefix, timeSuffix;
   vector<float> scanMZ;
   vector<int> scanIntensity;
+  vector<unsigned int> blockPattern;
+  bool breakFlag = false;
   while(!fbin.eof()){
-    for(int i = 0; i < 11; i++)
-      fixedPattern.push_back(read16_be(fbin));
-    count = read16_be(fbin);
-    if(count == 0)
+    blockPattern.clear();
+    for(int i = 0; i < 12; i++){
+      blockPattern.push_back(read16_be(fbin));
+      if(i == 6)
+        timePrefix = blockPattern.back();
+      else if(i == 7)
+        timeSuffix = blockPattern.back();
+      else if(i == 11)
+        count = blockPattern.back();
+    }
+    if(blockPattern.at(9) != 1)
       break;
-      
+    else
+      fixedPatterns.insert(fixedPatterns.end(), blockPattern.begin(), blockPattern.end());
+    
+    scanTime.push_back(((float)(timePrefix << 16) + timeSuffix) / MILISECOND);
     counts.push_back(count);
     // Highest peak in scan
     read16_be(fbin);
@@ -95,10 +112,11 @@ List agilentImportCpp(string filename){
     intensity.insert(intensity.end(), scanIntensity.begin(), scanIntensity.end());
   }
   cout << "\n";
-  agilent["fixed_pattern"] = fixedPattern;
+  agilent["fixed_patterns"] = fixedPatterns;
   agilent["counts"] = counts;
   agilent["mz"] = mz;
   agilent["intensity"] = intensity;
+  agilent["scanTime"] = scanTime;
   
   fbin.close();
   return agilent;

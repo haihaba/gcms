@@ -54,17 +54,18 @@ int encodeIntensity(int16_t intensity){
 }
 
 // [[Rcpp::export]]
-List agilentImportCpp(string filename){
+List agilentImportCpp(std::string file){
   List agilent;
   vector<int> fixedPatterns;
   vector<int> counts;
   vector<float> mz;
   vector<int> intensity;
   vector<float> scanTime;
+//  std::string file = Rcpp::as<std::string>(filename);
   
-  ifstream fbin (filename.c_str(), ios::binary | ios::in);
+  ifstream fbin (file.c_str(), ios::binary | ios::in);
   if (!fbin) {
-    cout << "Could not open file " << filename;
+    cout << "Could not open file " << file;
     return agilent;
   }
   

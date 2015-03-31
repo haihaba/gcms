@@ -32,10 +32,10 @@ uint16_t read16_be(istream& stream)
         (b[0] << 8) );
 }
 
-unsigned long long readCertainBits(unsigned long long raw, int numOfBits, int readFrom, int readTo){
-  unsigned long long result;
+unsigned long readCertainBits(unsigned long raw, int numOfBits, int readFrom, int readTo){
+  unsigned long result;
   int shift_number = numOfBits - readTo;
-  result = (unsigned long long)pow(2, (readTo - readFrom + 1)) - 1;
+  result = (unsigned long)pow(2, (readTo - readFrom + 1)) - 1;
 	result = result << shift_number;
 	result = raw & result;
 	result = result >> shift_number;
@@ -77,7 +77,7 @@ List agilentImportCpp(std::string file){
   vector<float> scanMZ;
   vector<int> scanIntensity;
   vector<unsigned int> blockPattern;
-  bool breakFlag = false;
+//  bool breakFlag = false;
   while(!fbin.eof()){
     blockPattern.clear();
     for(int i = 0; i < 12; i++){

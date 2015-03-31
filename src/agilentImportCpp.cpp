@@ -53,6 +53,9 @@ int encodeIntensity(int16_t intensity){
   return(encodedIntensity);
 }
 
+//' @importFrom Rcpp evalCpp
+//' @useDynLib 'GCMS'
+//' @export
 // [[Rcpp::export]]
 List agilentImportCpp(std::string file){
   List agilent;

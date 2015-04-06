@@ -309,5 +309,7 @@ readDFile<-function(pathname){
   rownames(DATA)<-scanTime
   colnames(DATA)<-seq(1:dim(DATA)[2])
   
+  #### Output is a matrix of ion counts with rows as scantime and columns as mass, 
+  #### and the respective values as labels 
   return(DATA) 
 }

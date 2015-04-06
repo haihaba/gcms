@@ -65,6 +65,10 @@ List agilentImportCpp(std::string file){
   vector<int> intensity;
   vector<float> scanTime;
 //  std::string file = Rcpp::as<std::string>(filename);
+
+  int found = file.find_first_of("~");
+  if(found != -1)
+    cout << file.replace(0,1,getenv("HOME"));
   
   ifstream fbin (file.c_str(), ios::binary | ios::in);
   if (!fbin) {

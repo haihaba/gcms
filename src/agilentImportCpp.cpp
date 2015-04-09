@@ -11,7 +11,38 @@ using namespace std;
 #define INTENSITYHEADER 2
 #define SHIFTBASE 3
 #define MILISECOND 1000
+#define MINMZ 100000
+#define MAXMZ -1
 
+IntegerMatrix assembleMassSpectrometry(List importedData){
+  vector<float> scanTime = importedData["scanTime"];
+  int scanNum = scanTime.size();
+  vector<float> uniqueMz = importedData["uniqueMz"];
+  int mzNum = uniqueMz.size();
+  IntegerMatrix massSpectrometry(scanNum, mzNum);
+  int count;
+  int prevCount = 0;
+  vector<int> counts = importedData["counts"];
+  vector<float> mzs = importedData["mz"];
+  vector<float> intensity = importedData["intensity"];
+  vector<float>::iterator it;
+  float mz;
+  int mzPos;
+  
+  for(int i = 0; i < scanNum; i++){
+    count = counts[i];
+    if(i != 0)
+      prevCount = prevCount + counts[i-1];
+    for(int j = 0; j < count; j++){
+      mz = mzs[prevCount + j];
+      it = find(uniqueMz.begin(), uniqueMz.end(), mz);
+      mzPos = distance(uniqueMz.begin(), it);
+      massSpectrometry(i, mzPos) = intensity[prevCount + j];
+    }
+  }
+  
+  return(massSpectrometry);
+}
 
 int getFileSize(string filename){
   streampos begin,end;
@@ -57,13 +88,17 @@ int encodeIntensity(int16_t intensity){
 //' @useDynLib 'GCMS'
 //' @export
 // [[Rcpp::export]]
-List agilentImportCpp(std::string file){
+List agilentImportCpp(std::string file, bool assembleMS = true){
   List agilent;
   vector<int> fixedPatterns;
   vector<int> counts;
   vector<float> mz;
+  vector<float> uniqueMz;
   vector<int> intensity;
   vector<float> scanTime;
+  float maxMz = MAXMZ;
+  float minMz = MINMZ;
+  float currMz;
 //  std::string file = Rcpp::as<std::string>(filename);
 
   int found = file.find_first_of("~");
@@ -111,7 +146,21 @@ List agilentImportCpp(std::string file){
     scanIntensity.clear();
     // Get spectrometry data
     for(int j = 0; j < count; j++){
-      scanMZ.push_back(encodeMZ(read16_be(fbin)));
+      currMz = encodeMZ(read16_be(fbin));
+      
+      if(currMz > maxMz)
+        maxMz = currMz;
+      if(currMz < minMz)
+        minMz = currMz;
+        
+      if(find(uniqueMz.begin(), uniqueMz.end(), currMz) == uniqueMz.end()) {
+          /* v does not contain x */
+          uniqueMz.push_back(currMz);
+      } else {
+          /* v contains x */
+      }
+        
+      scanMZ.push_back(currMz);
       scanIntensity.push_back(encodeIntensity(read16_be(fbin)));
     }
     reverse(scanMZ.begin(), scanMZ.end());
@@ -119,14 +168,21 @@ List agilentImportCpp(std::string file){
     mz.insert(mz.end(), scanMZ.begin(), scanMZ.end());
     intensity.insert(intensity.end(), scanIntensity.begin(), scanIntensity.end());
   }
-  cout << "\n";
+  fbin.close();
+  
   agilent["fixed_patterns"] = fixedPatterns;
   agilent["counts"] = counts;
   agilent["mz"] = mz;
   agilent["intensity"] = intensity;
   agilent["scanTime"] = scanTime;
-  
-  fbin.close();
+  agilent["minMz"] = minMz;
+  agilent["maxMz"] = maxMz;
+  if(assembleMS){
+    sort(uniqueMz.begin(), uniqueMz.end(), std::less<float>());
+    agilent["uniqueMz"] = uniqueMz;
+    agilent["massSpectrometry"] = assembleMassSpectrometry(agilent);
+  }
+    
   return agilent;
 }
 

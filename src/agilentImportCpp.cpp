@@ -14,10 +14,14 @@ using namespace std;
 #define MINMZ 100000
 #define MAXMZ -1
 
+double round(float d) {
+  return floor(d + 0.5);
+}
+
 IntegerMatrix assembleMassSpectrometry(List importedData){
   vector<float> scanTime = importedData["scanTime"];
   int scanNum = scanTime.size();
-  vector<float> uniqueMz = importedData["uniqueMz"];
+  vector<double> uniqueMz = importedData["uniqueMz"];
   int mzNum = uniqueMz.size();
   IntegerMatrix massSpectrometry(scanNum, mzNum);
   int count;
@@ -25,8 +29,8 @@ IntegerMatrix assembleMassSpectrometry(List importedData){
   vector<int> counts = importedData["counts"];
   vector<float> mzs = importedData["mz"];
   vector<float> intensity = importedData["intensity"];
-  vector<float>::iterator it;
-  float mz;
+  vector<double>::iterator it;
+  double mz;
   int mzPos;
   
   for(int i = 0; i < scanNum; i++){
@@ -34,10 +38,10 @@ IntegerMatrix assembleMassSpectrometry(List importedData){
     if(i != 0)
       prevCount = prevCount + counts[i-1];
     for(int j = 0; j < count; j++){
-      mz = mzs[prevCount + j];
+      mz = round(mzs[prevCount + j]);
       it = find(uniqueMz.begin(), uniqueMz.end(), mz);
       mzPos = distance(uniqueMz.begin(), it);
-      massSpectrometry(i, mzPos) = intensity[prevCount + j];
+      massSpectrometry(i, mzPos) = massSpectrometry(i, mzPos) + intensity[prevCount + j];
     }
   }
   
@@ -93,7 +97,7 @@ List agilentImportCpp(std::string file, bool assembleMS = true){
   vector<int> fixedPatterns;
   vector<int> counts;
   vector<float> mz;
-  vector<float> uniqueMz;
+  vector<double> uniqueMz;
   vector<int> intensity;
   vector<float> scanTime;
   float maxMz = MAXMZ;
@@ -153,9 +157,9 @@ List agilentImportCpp(std::string file, bool assembleMS = true){
       if(currMz < minMz)
         minMz = currMz;
         
-      if(find(uniqueMz.begin(), uniqueMz.end(), currMz) == uniqueMz.end()) {
+      if(find(uniqueMz.begin(), uniqueMz.end(), round(currMz)) == uniqueMz.end()) {
           /* v does not contain x */
-          uniqueMz.push_back(currMz);
+          uniqueMz.push_back(round(currMz));
       } else {
           /* v contains x */
       }

@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 #include <fstream>
+#include <math.h>
 using namespace Rcpp;
 using namespace std;
 
@@ -14,9 +15,9 @@ using namespace std;
 #define MINMZ 100000
 #define MAXMZ -1
 
-double round(float d) {
-  return floor(d + 0.5);
-}
+//double round(float d) {
+//  return floor(d + 0.5);
+//}
 
 IntegerMatrix assembleMassSpectrometry(List importedData){
   vector<float> scanTime = importedData["scanTime"];

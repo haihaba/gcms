@@ -223,6 +223,11 @@ List extractDataFromAcqmethFile(std::string file){
   
   string line;
   ifstream acqmethFile;
+  
+  int found = file.find_first_of("~");
+  if(found != -1)
+    file = file.replace(0,1,getenv("HOME"));
+    
 	acqmethFile.open(file.c_str());
   if (acqmethFile.is_open()) {
     while(!acqmethFile.eof()) { // To get you all the lines.

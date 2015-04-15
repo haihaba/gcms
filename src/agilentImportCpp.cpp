@@ -1,6 +1,7 @@
 #include <Rcpp.h>
 #include <fstream>
 #include <math.h>
+#include <dirent.h>
 using namespace Rcpp;
 using namespace std;
 
@@ -14,24 +15,45 @@ using namespace std;
 #define MILISECOND 1000
 #define MINMZ 100000
 #define MAXMZ -1
+#define SEP "/"
+#define DATAFILE "DATA.MS"
+#define ACQMETHFILE "acqmeth.txt"
+#define LOWMASS "Low Mass"
+#define HIGHMASS "High Mass"
 
-//double round(float d) {
-//  return floor(d + 0.5);
-//}
+vector<string> getdir (string dir){
+    vector<string> files;
+    DIR *dp;
+    struct dirent *dirp;
+    if((dp  = opendir(dir.c_str())) == NULL) {
+      cout << "Could not read this directory." << endl;
+      return files;
+    }
 
-IntegerMatrix assembleMassSpectrometry(List importedData){
+    while ((dirp = readdir(dp)) != NULL) {
+        files.push_back(string(dirp->d_name));
+    }
+    closedir(dp);
+    return files;
+}
+
+IntegerMatrix assembleMassSpectrometry(List importedData, List acqmeth){
   vector<float> scanTime = importedData["scanTime"];
-  int scanNum = scanTime.size();
-  vector<double> uniqueMz = importedData["uniqueMz"];
-  int mzNum = uniqueMz.size();
-  IntegerMatrix massSpectrometry(scanNum, mzNum);
-  int count;
-  int prevCount = 0;
   vector<int> counts = importedData["counts"];
   vector<float> mzs = importedData["mz"];
   vector<float> intensity = importedData["intensity"];
-  vector<double>::iterator it;
-  double mz;
+  vector<int>::iterator it;
+  vector<int> uniqueMz = acqmeth["uniqueMz"];
+  
+  int scanNum = scanTime.size();
+  int minMz = acqmeth["minMz"];
+  int maxMz = acqmeth["maxMz"];
+  int mzNum = maxMz - minMz + 1;
+  
+  IntegerMatrix massSpectrometry(scanNum, mzNum);
+  int count;
+  int prevCount = 0;
+  int mz;
   int mzPos;
   
   for(int i = 0; i < scanNum; i++){
@@ -59,8 +81,7 @@ int getFileSize(string filename){
   return(end - begin);
 }
 
-uint16_t read16_be(istream& stream)
-{
+uint16_t read16_be(istream& stream){
     uint8_t b[2];
     stream.read((char *)b,2);
     return static_cast<uint16_t>(
@@ -89,11 +110,7 @@ int encodeIntensity(int16_t intensity){
   return(encodedIntensity);
 }
 
-//' @importFrom Rcpp evalCpp
-//' @useDynLib 'GCMS'
-//' @export
-// [[Rcpp::export]]
-List agilentImportCpp(std::string file, bool assembleMS = true){
+List agilentImportCpp(std::string file){
   List agilent;
   vector<int> fixedPatterns;
   vector<int> counts;
@@ -180,15 +197,79 @@ List agilentImportCpp(std::string file, bool assembleMS = true){
   agilent["mz"] = mz;
   agilent["intensity"] = intensity;
   agilent["scanTime"] = scanTime;
-  agilent["minMz"] = minMz;
-  agilent["maxMz"] = maxMz;
-  if(assembleMS){
-    sort(uniqueMz.begin(), uniqueMz.end(), std::less<float>());
-    agilent["uniqueMz"] = uniqueMz;
-    agilent["massSpectrometry"] = assembleMassSpectrometry(agilent);
-  }
+  agilent["minExtractedMz"] = minMz;
+  agilent["maxExtractedMz"] = maxMz;
     
   return agilent;
+}
+
+vector<string> split(string str, char delimiter) {
+  vector<string> internal;
+  stringstream ss(str); // Turn the string into a stream.
+  string tok;
+  
+  while(getline(ss, tok, delimiter)) {
+    internal.push_back(tok);
+  }
+  
+  return internal;
+}
+
+List extractDataFromAcqmethFile(std::string file){
+  List acqmeth;
+  int minMz;
+  int maxMz;
+  vector<string> splittedStr;
+  
+  string line;
+  ifstream acqmethFile;
+	acqmethFile.open(file.c_str());
+  if (acqmethFile.is_open()) {
+    while(!acqmethFile.eof()) { // To get you all the lines.
+      getline(acqmethFile, line); // Saves the line in variable "line".
+//      cout << line << endl; // Prints our STRING.
+      if(line.find(LOWMASS, 0) != string::npos){
+        splittedStr = split (line, ':');
+        minMz = atoi(splittedStr[1].c_str());
+      }
+      if(line.find(HIGHMASS, 0) != string::npos){
+        splittedStr = split (line, ':');
+        maxMz = atoi(splittedStr[1].c_str());
+      }
+    }
+  }
+	acqmethFile.close();
+  acqmeth["minMz"] = minMz;
+  acqmeth["maxMz"] = maxMz;
+  
+  vector<int> uniqueMz;
+  for(int i = minMz; i <= maxMz; i++){
+    uniqueMz.push_back(i);
+  }
+  acqmeth["uniqueMz"] = uniqueMz;
+    
+  return(acqmeth);
+}
+
+//' @importFrom Rcpp evalCpp
+//' @useDynLib 'GCMS'
+//' @export
+// [[Rcpp::export]]
+List agilentImportMSFile(std::string file){
+  return (agilentImportCpp(file));
+}
+
+//' @export
+// [[Rcpp::export]]
+List agilentImportFromDir(std::string directory){
+  string msFile = directory + SEP + DATAFILE;
+  string acqmethFile = directory + SEP + ACQMETHFILE;
+  List agilent = agilentImportCpp(msFile);
+  List acqmeth = extractDataFromAcqmethFile(acqmethFile);
+  agilent["massSpectrometry"] = assembleMassSpectrometry(agilent, acqmeth);
+  agilent["uniqueMz"] = acqmeth["uniqueMz"];
+  
+  return (agilent);
 }
 
 

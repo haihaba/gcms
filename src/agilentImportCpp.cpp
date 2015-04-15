@@ -217,8 +217,8 @@ vector<string> split(string str, char delimiter) {
 
 List extractDataFromAcqmethFile(std::string file){
   List acqmeth;
-  int minMz;
-  int maxMz;
+  int minMz = 0;
+  int maxMz = 0;
   vector<string> splittedStr;
   
   string line;

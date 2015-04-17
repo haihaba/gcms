@@ -173,7 +173,7 @@ baseline <- function(X,projectpath,FL = 0){
     end<-dim(X)[1]-FL
     
     ## moving average filter along rows (scantimes)
-    Xbc[start:end,]<-filter(X,filter=rep(1/(FL*2+1),(FL*2+1)))[start:end,]
+    Xbc[start:end,]<-stats:::filter(X,filter=rep(1/(FL*2+1),(FL*2+1)))[start:end,]
     
     
     if(any(Xbc<0))

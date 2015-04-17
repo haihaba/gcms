@@ -244,11 +244,12 @@ List extractDataFromAcqmethFile(std::string file){
     }
   }
 	acqmethFile.close();
-  acqmeth["minMz"] = minMz;
+//  acqmeth["minMz"] = minMz;
+  acqmeth["minMz"] = 1; 
   acqmeth["maxMz"] = maxMz;
   
   vector<int> uniqueMz;
-  for(int i = minMz; i <= maxMz; i++){
+  for(int i = acqmeth["minMz"]; i <= maxMz; i++){
     uniqueMz.push_back(i);
   }
   acqmeth["uniqueMz"] = uniqueMz;

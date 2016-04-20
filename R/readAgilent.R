@@ -79,7 +79,11 @@ readAgilent <-function(projectpath,filepath){
     ## ncdf file import
     errorcounter  <- 0
     cat("File ",basename(cdffiles[i]), "opened. ",paste("(",i,"/",length(cdffiles),")",sep=""),"\n")
-    DATA       <- readDFile(cdffiles[i])
+    #DATA       <- readDFile(cdffiles[i])
+    cppImport  <-agilentImportFromDir(cdffiles[i])
+    DATA <- cppImport$massSpectrometry
+    rownames(DATA)<-cppImport$scanTime
+    colnames(DATA)<-cppImport$uniqueMz
     TIME  <- as.numeric(rownames(DATA))
     importMz <- as.numeric(colnames(DATA))
     MZmin <- min(importMz)
@@ -211,8 +215,10 @@ readDFile<-function(pathname){
   cat('...determine number of scans...\n')
   secondPeriod<-agilent[seq(5772,2000000,4)]
   ### remove Na's
-  secondPeriod<-secondPeriod[-which(is.na(secondPeriod))]
-  
+  if(any(is.na(secondPeriod))){
+    secondPeriod<-secondPeriod[-which(is.na(secondPeriod))]
+  }
+    
   
   ### inline function to extract the data paddings
   betweenSequence<-function(period,counts){

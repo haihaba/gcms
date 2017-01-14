@@ -6,7 +6,7 @@
 ##' @param filepath     can be used to import a single file and return the data to the caller
 ##' @return Xbc, SCAN_INFO, SCAN_RANGE, file
 read_cdf <-function(projectpath,filepath){
-  require(ncdf)
+  require(ncdf4)
   require(tcltk)
   
   
@@ -76,17 +76,17 @@ read_cdf <-function(projectpath,filepath){
     
     
     ## ncdf file import
-    cdffile       <- open.ncdf(cdffiles[i])
+    cdffile       <- nc_open(cdffiles[i])
     cat("File ",basename(cdffiles[i]), "opened. ",paste("(",i,"/",length(cdffiles),")",sep=""),"\n")
-    MZ    <- get.var.ncdf(cdffile,varid=cdffile$var[["mass_values"]])
+    MZ    <- ncvar_get(cdffile,varid=cdffile$var[["mass_values"]])
     cat("Reading variables...\n")
-    INT   <- get.var.ncdf(cdffile,varid=cdffile$var[["intensity_values"]])
-    TIME  <- get.var.ncdf(cdffile,varid=cdffile$var[["scan_acquisition_time"]])
-    count <- get.var.ncdf(cdffile,varid=cdffile$var[["point_count"]])
-    MZmin <- min(get.var.ncdf(cdffile,varid=cdffile$var[["mass_range_min"]]))
-    MZmax <- max(get.var.ncdf(cdffile,varid=cdffile$var[["mass_range_max"]]))
+    INT   <- ncvar_get(cdffile,varid=cdffile$var[["intensity_values"]])
+    TIME  <- ncvar_get(cdffile,varid=cdffile$var[["scan_acquisition_time"]])
+    count <- ncvar_get(cdffile,varid=cdffile$var[["point_count"]])
+    MZmin <- min(ncvar_get(cdffile,varid=cdffile$var[["mass_range_min"]]))
+    MZmax <- max(ncvar_get(cdffile,varid=cdffile$var[["mass_range_max"]]))
 
-    close.ncdf(cdffile)
+    nc_close(cdffile)
     cat("File ",basename(cdffiles[i]), "closed.\n")
 
     

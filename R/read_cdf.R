@@ -216,12 +216,16 @@ do_DATA1<-function(INT,MZ,TIME,count,MZmin,MZmax,MZP){
     
     DATA  <-  matrix(0,lenTIME,max(MZ))
     scans <-  min(which(count != 0))
+    points <- count[min(which(count != 0))]
     
     for(i in 1:lenINT){
+      points <- points-1
       DATA[scans,MZ[i]]  <- DATA[scans,MZ[i]] + INT[i]
       if(i != lenINT)
-        if(MZ[i+1] < MZ[i])
+        if(points == 0){
           scans  <- scans + min(which(count[(scans+1):lencount] != 0))
+          points <- count[scans]
+        }
     }
   }else
     DATA <- cbind(matrix(0,nrow=lenTIME,ncol=max((min(MZ)-1),0)),matrix(INT,nrow=lenTIME,ncol=(max(MZ)-min(MZ)+1),byrow=TRUE))

@@ -12,4 +12,3 @@ type, windwolist
 \description{
 Function find_spectrum2
 }
-

@@ -9,4 +9,3 @@ batch_proc(projectpath, cores, parallel = TRUE)
 \description{
 Function batch_proc
 }
-

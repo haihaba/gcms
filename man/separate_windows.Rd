@@ -9,4 +9,3 @@ separate_windows(projectpath, windowlist, files, edges, model, prediction)
 \description{
 Function separate_windows
 }
-

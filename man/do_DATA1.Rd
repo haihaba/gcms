@@ -31,4 +31,3 @@ Function do_DATA1 is the method used with Agilent Chemstation data
 and is set as default. It is called from read_cdf.R
 This function is used to arrange the initial data table after import
 }
-

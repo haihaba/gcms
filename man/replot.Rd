@@ -9,4 +9,3 @@ replot(edges, DATA, zoomwidth, maintext)
 \description{
 Function replot
 }
-

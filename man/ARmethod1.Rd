@@ -12,4 +12,3 @@ C, S
 \description{
 Function ARmethod1
 }
-

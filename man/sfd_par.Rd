@@ -12,4 +12,3 @@ object, j, md
 \description{
 Function sfd_par
 }
-

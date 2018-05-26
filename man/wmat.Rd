@@ -12,4 +12,3 @@ dm
 \description{
 Function wmat
 }
-

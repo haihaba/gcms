@@ -2,6 +2,8 @@
 % Please edit documentation in R/MCR_settings.R, R/check_data.R, R/new_samples.R
 \name{pca}
 \alias{pca}
+\alias{pca}
+\alias{pca}
 \title{Function pca}
 \usage{
 pca(X, comp)
@@ -24,4 +26,3 @@ Function pca
 
 Function pca
 }
-

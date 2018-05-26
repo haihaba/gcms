@@ -15,4 +15,3 @@ outData       list containing importInt, importMz, importCount, importScanTime
 \description{
 Function readDFile
 }
-

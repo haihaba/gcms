@@ -2,6 +2,8 @@
 % Please edit documentation in R/batch_proc.R, R/check_data.R, R/new_samples.R
 \name{ss}
 \alias{ss}
+\alias{ss}
+\alias{ss}
 \title{Function ss}
 \usage{
 ss(X)
@@ -24,4 +26,3 @@ Function ss
 
 Function ss
 }
-

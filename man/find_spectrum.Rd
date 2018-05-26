@@ -12,4 +12,3 @@ windowlist
 \description{
 Function find_spectrum
 }
-

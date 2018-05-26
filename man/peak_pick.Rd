@@ -2,6 +2,7 @@
 % Please edit documentation in R/batch_proc.R, R/new_samples.R
 \name{peak_pick}
 \alias{peak_pick}
+\alias{peak_pick}
 \title{Function peak_pick}
 \usage{
 peak_pick(x)
@@ -20,4 +21,3 @@ Function to find peaks
 Function peak_pick
 Function to find peaks
 }
-

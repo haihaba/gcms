@@ -12,4 +12,3 @@ D
 \description{
 Function X
 }
-

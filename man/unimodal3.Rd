@@ -12,4 +12,3 @@ C, CP
 \description{
 Function unimodal3
 }
-

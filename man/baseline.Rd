@@ -2,6 +2,7 @@
 % Please edit documentation in R/readAgilent.R, R/read_cdf.R
 \name{baseline}
 \alias{baseline}
+\alias{baseline}
 \title{Function Baseline}
 \usage{
 baseline(X, projectpath, FL = 0)
@@ -31,4 +32,3 @@ Function Baseline
 
 Function Baseline
 }
-

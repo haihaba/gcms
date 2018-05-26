@@ -30,4 +30,3 @@ creates a number of files:
 \author{
 Lorenz Gerber
 }
-

@@ -12,4 +12,3 @@ x
 \description{
 Function E_peak_pick
 }
-

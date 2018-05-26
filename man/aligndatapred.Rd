@@ -10,4 +10,3 @@ aligndatapred(projectpath, predpath, newsamples, target, minshift, datasource,
 \description{
 Function aligndatapred
 }
-

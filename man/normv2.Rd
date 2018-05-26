@@ -12,4 +12,3 @@ sn
 \description{
 Functino normv2
 }
-

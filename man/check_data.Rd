@@ -9,4 +9,3 @@ check_data(projectpath)
 \description{
 Function check_data
 }
-

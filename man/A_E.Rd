@@ -12,4 +12,3 @@ edges
 \description{
 Probably the funciton to set automatic edges for the processing windows
 }
-

@@ -21,4 +21,3 @@ replot_align(DATA, ADATA, start, stop, zoomwidth = c(0, 0), datasource,
 \description{
 Function replot_align
 }
-

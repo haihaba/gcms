@@ -13,4 +13,3 @@ C, S, INDEX, R2, noise, CP
 Function do_AR_all
 Funciton to do Alternate Regression
 }
-

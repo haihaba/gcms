@@ -13,4 +13,3 @@ Cnew
 Function do_AR_all_prediction
 Funciton to do Alternate Regression on a prediction set
 }
-

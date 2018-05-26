@@ -9,4 +9,3 @@ spec2NIST(projectpath, type, all = FALSE)
 \description{
 Function spec2NIST
 }
-

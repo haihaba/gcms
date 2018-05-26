@@ -9,4 +9,3 @@ replot_checkdata(x, y, scale_text, maintext, OBS, ssX, select, coords = NULL)
 \description{
 Function replot_checkdata
 }
-

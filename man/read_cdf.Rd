@@ -15,4 +15,3 @@ Xbc, SCAN_INFO, SCAN_RANGE, file
 \description{
 Function read_cdf
 }
-

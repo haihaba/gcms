@@ -12,4 +12,3 @@ A
 \description{
 Function varnamegen
 }
-

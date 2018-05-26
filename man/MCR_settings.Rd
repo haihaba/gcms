@@ -12,4 +12,3 @@ MCR
 \description{
 Function MCR_settings
 }
-

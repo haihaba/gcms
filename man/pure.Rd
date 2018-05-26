@@ -19,4 +19,3 @@ if d(nspectra,nwave) imp gives purest nwave => sp are conc. profiles (nr,nspectr
 if d(nwave,nspectra) imp gives purest nspectra => sp are spectra profiles (nr,nwave)
 f percent of noise allowed respect maximum of the average spectrum given in % (i.e. 1% or 0.1%))
 }
-

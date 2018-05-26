@@ -9,4 +9,3 @@ new_samples(projectpath)
 \description{
 Function new_samples
 }
-

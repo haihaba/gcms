@@ -12,4 +12,3 @@ A_DATA
 \description{
 Function gui_align
 }
-

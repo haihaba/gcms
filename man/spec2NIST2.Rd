@@ -9,4 +9,3 @@ spec2NIST2(predpath, type, all = FALSE)
 \description{
 Function spec2NIST2
 }
-

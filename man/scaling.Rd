@@ -12,4 +12,3 @@ Xout, scale_text
 \description{
 Function scaling
 }
-

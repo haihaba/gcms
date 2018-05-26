@@ -12,4 +12,3 @@ ind
 \description{
 Function w_mor2
 }
-

@@ -2,6 +2,7 @@
 % Please edit documentation in R/spec2NIST.R, R/spec2NIST2.R
 \name{approxExtrap}
 \alias{approxExtrap}
+\alias{approxExtrap}
 \title{Function approxExtrap}
 \usage{
 approxExtrap(x, y, xout, method = "linear", n = 50, rule = 2, f = 0,
@@ -22,4 +23,3 @@ This function is called from find_spectrum.R, find_spectrum2.R, spec2NIST.R and 
 Function approxExtrap
 This function is called from find_spectrum.R, find_spectrum2.R, spec2NIST.R and spec2NIST2.R
 }
-

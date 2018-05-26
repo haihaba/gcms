@@ -2,8 +2,8 @@
 % Please edit documentation in R/GCMS-package.R
 \docType{package}
 \name{GCMS-package}
-\alias{GCMS}
 \alias{GCMS-package}
+\alias{GCMS}
 \title{GC/MS Data Processing}
 \description{
 GC/MS Data Processing Pipeline
@@ -28,4 +28,3 @@ Regresstion (MCR-ALS) as shown in Jonsson et al. (2005).
 Lorenz Gerber \email{lorenz.gerber@slu.se}
 }
 \keyword{package}
-

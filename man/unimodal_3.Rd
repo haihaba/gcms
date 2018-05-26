@@ -12,4 +12,3 @@ C
 \description{
 Function unimodal_3
 }
-

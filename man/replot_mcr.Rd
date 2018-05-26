@@ -13,4 +13,3 @@ replot_mcr(x, y, maintext, incl, excl, numfiles, set1, set2,
 \description{
 Function replot_mcr
 }
-

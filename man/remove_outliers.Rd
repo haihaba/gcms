@@ -9,4 +9,3 @@ remove_outliers(projectpath, outliers)
 \description{
 Function remove_outliers
 }
-

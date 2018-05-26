@@ -12,4 +12,3 @@ DATA, SPECTRUM, VARID1, OBSID1, VARID2
 \description{
 Function read_win2
 }
-
